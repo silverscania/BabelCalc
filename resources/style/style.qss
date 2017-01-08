@@ -1,0 +1,118 @@
+/*
+   Copyright (C) 2017 James Clark <james@bitsofbeards.co.uk>
+
+   This file is part of BabelCalc, a calculator that operates on
+   multiple numerical bases simultaneously.
+
+   BabelCalc is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 2 of the License, or
+   (at your option) any later version.
+
+   BabelCalc is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BabelCalc.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+QPushButton {
+    border: none;
+    font-family: "Dosis";
+    font-weight: 500;
+    font-size: 16px;
+    color: white;
+}
+
+QPushButton#Normal {
+    background-color: #00EEEEEE;
+}
+QPushButton#Normal:pressed {
+    background-color: #DDD;
+}
+QPushButton {
+    border-left: 1px solid #55000000;
+    border-bottom: 1px solid #55000000;
+}
+QPushButton[left="true"] {
+    border-left: none;
+}
+QPushButtonl[bottom="true"] {
+    border-bottom: none;
+}
+
+QPushButton#Dec {
+    background-color: #55b46c82;
+}
+QPushButton#Dec:pressed {
+    background-color: #DDD;
+}
+
+QPushButton#Hex {
+    background-color: #55699ca6;
+}
+QPushButton#Hex:pressed {
+    background-color: #DDD;
+}
+
+QPushButton#Action {
+    background-color: #55f7aa60;
+}
+QPushButton#Action:pressed {
+    background-color: #DDD;
+}
+
+QPushButton:pressed {
+    background-color: #DDD;
+}
+
+QLineEdit#Basic, QLabel {
+    font-family: "Source Code Pro No Dot";
+    font-size: 45px;
+    background-color: #00000000;
+    color: white;
+    border: none;
+    padding: 0;
+    margin: 0 7px 0 0;
+}
+QLineEdit#Binary, QLabel#Binary {
+    font-family: "Source Code Pro No Dot";
+    font-size: 14px;
+    background-color: #00000000;
+    color: white;
+    border: none;
+    padding: 0;
+    margin: 0px 7px 0 0;
+}
+QLineEdit#Binary {
+    margin-top: 6px;
+}
+QLabel#Binary {
+    margin-bottom: 6px;
+}
+
+QLabel {
+    font-size: 14px;
+}
+QLabel#baseLabel {
+    font-family: "Source Code Pro No Dot Light";
+    color: #eee;
+    font-size: 10px;
+    margin-bottom: 6px;
+}
+#ToggleButtonRow {
+    background-color: #33FFFFFF;
+    border-bottom: 1px solid #55000000;
+}
+#Input {
+    border-bottom: 1px solid #66FFFFFF;
+    background-color: #22000000;
+}
+#MainGrid {
+    background-color: #22FFFFFF;
+    border-top: 1px solid #66FFFFFF;
+    border-bottom: 1px solid #55000000;
+    padding: 1px;
+}

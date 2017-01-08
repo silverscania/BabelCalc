@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>font/Source Code Pro No Dot ExtraLight.ttf</file>
+        <file>font/Source Code Pro No Dot Light.ttf</file>
+        <file>style/style.qss</file>
+        <file>style/windowsstyle.qss</file>
+    </qresource>
+</RCC>
