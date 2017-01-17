@@ -31,11 +31,11 @@ enum class CalcStackType { Value, Operator, Bracket };
 
 struct CalcStackItem {
 	explicit CalcStackItem(const Value& val);
-	explicit CalcStackItem(std::unique_ptr<Operator> operater);
+	explicit CalcStackItem(std::shared_ptr<Operator> operater);
 	explicit CalcStackItem();
 
 	Value val;
-	std::unique_ptr<Operator> operater;
+	std::shared_ptr<Operator> operater;
 	CalcStackType type;
 };
 
@@ -69,5 +69,6 @@ class Calculator : public QObject {
 		std::mt19937 randgen;
 		std::vector<CalcStackItem> stack;
 
-		void evaluate(std::vector<CalcStackItem>::iterator from, std::vector<CalcStackItem>::iterator to);
+		void evaluateAll();
+		Value evaluate(std::vector<CalcStackItem>& section);
 };

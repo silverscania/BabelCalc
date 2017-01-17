@@ -71,7 +71,7 @@ void Calculator::inputEquals()
 
 	//evaluate if still not empty
 	if(!stack.empty()) {
-		evaluate(stack.begin(), stack.end());
+		evaluateAll();
 
 		emit nextInputClearsChanged(true);
 		emit displayValueChanged(stack.back().val, false);
@@ -158,12 +158,33 @@ void Calculator::inputCloseBracket()
 
 }
 
-void Calculator::evaluate(std::vector<CalcStackItem>::iterator from, std::vector<CalcStackItem>::iterator to)
+void Calculator::evaluateAll()
+{
+	//todo
+	//first find innermost bracket
+	//evaluate
+	//delete range of bracket
+	//loop until only one item left
+	auto begin = stack.begin();
+	auto end = stack.end();
+
+	//copy range between brackets
+	auto bracketSection = std::vector<CalcStackItem>(begin, end);
+
+	//evaluate
+	Value val = evaluate(bracketSection);
+
+	//remove range and replace with result value
+	auto it = stack.erase(begin, end);
+	stack.insert(it, CalcStackItem(val));
+}
+
+Value Calculator::evaluate(std::vector<CalcStackItem>& section)
 {
 	//BODMAS, evaluate in order or precedence 0 - 2
 	for(int precedence = 0; precedence <= 2; ++precedence) {
 		//evaluate left to right
-		for(auto it = from; it != to && it != stack.end(); ++it) {
+		for(auto it = section.cbegin(); it != section.cend(); ++it) {
 			//only interested in binary operators
 			auto op = dynamic_cast<BinaryOperator*>((*it).operater.get());
 			if(op == nullptr)
@@ -172,13 +193,15 @@ void Calculator::evaluate(std::vector<CalcStackItem>::iterator from, std::vector
 			if(op->precedence == precedence) {
 				Value val = op->evaluate((*(it-1)).val, (*(it+1)).val);
 				//remove value-operator-value tuple
-				stack.erase(it-1, it+2);
+				it = section.erase(it-1, it+2);
 
 				//insert new value
-				it = stack.insert(it-1, CalcStackItem(val));
+				it = section.insert(it, CalcStackItem(val));
 			}
 		}
 	}
+
+	return section.front().val;
 }
 
 CalcStackItem::CalcStackItem(const Value &val) :
@@ -187,7 +210,7 @@ CalcStackItem::CalcStackItem(const Value &val) :
 {
 }
 
-CalcStackItem::CalcStackItem(std::unique_ptr<Operator> operater) :
+CalcStackItem::CalcStackItem(std::shared_ptr<Operator> operater) :
 	operater(std::move(operater)),
 	type(CalcStackType::Operator)
 {
