@@ -95,7 +95,6 @@ struct BinaryOperator : public Operator {
 BINARY_OPERATOR(AdditionOperator,			+,		2)
 BINARY_OPERATOR(SubtractionOperator,		-,		2)
 BINARY_OPERATOR(MultiplicationOperator,		*,		1)
-BINARY_OPERATOR(DivisionOperator,			/,		1)
 
 BITWISE_OPERATOR(AndOperator,				&,  ,	0)
 BITWISE_OPERATOR(OrOperator,				|,  ,	0)
@@ -254,10 +253,25 @@ struct ePowXOperator : public UnaryOperator {
 //	}
 //};
 
+struct DivisionOperator : public BinaryOperator {
+	inline DivisionOperator() : BinaryOperator(1) {}
+	inline Value evaluate(const Value& lhs, const Value& rhs) const override {
+		CalcFloat fval = rhs.floatVal == 0.0f ? 0 : lhs.floatVal / rhs.floatVal;
+		CalcInt ival = rhs.intVal == 0 ? 0 : lhs.intVal / rhs.intVal;
+		CalcUInt uival = rhs.uIntVal == 0 ? 0 : lhs.uIntVal / rhs.uIntVal;
+
+		return Value(ival, fval, uival);
+	}
+};
+
 struct ModulusOperator : public BinaryOperator {
 	inline ModulusOperator() : BinaryOperator(0) {}
 	inline Value evaluate(const Value& lhs, const Value& rhs) const override {
-		return Value(lhs.intVal % rhs.intVal, std::fmod(lhs.floatVal, rhs.floatVal), lhs.uIntVal % rhs.uIntVal);
+		CalcFloat fval = rhs.floatVal == 0.0f ? 0 : std::fmod(lhs.floatVal, rhs.floatVal);
+		CalcInt ival = rhs.intVal == 0 ? 0 : lhs.intVal % rhs.intVal;
+		CalcUInt uival = rhs.uIntVal == 0 ? 0 : lhs.uIntVal % rhs.uIntVal;
+
+		return Value(ival, fval, uival);
 	}
 };
 
