@@ -29,10 +29,6 @@ SOURCES       = src/basicinput.cpp \
 target.path = /Applications/BabelCalc
 INSTALLS += target
 
-#c++14 workaround http://lists.qt-project.org/pipermail/qt-creator/2015-July/004848.html
-QMAKE_CXXFLAGS_CXX11 = -std=c++14 -stdlib=libc++
-CONFIG += c++11
-
 #mac stuff
 macx: {
     OBJECTIVE_HEADERS =
@@ -40,11 +36,14 @@ macx: {
     QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.10
     QMAKE_MAC_SDK = macosx
     LIBS += -framework Cocoa
+    #c++14 workaround http://lists.qt-project.org/pipermail/qt-creator/2015-July/004848.html
+    QMAKE_CXXFLAGS_CXX11 = -std=c++14 -stdlib=libc++
+    CONFIG += c++11
 }
 
 #linux but not mac
 unix:!macx {
-   ##SOURCES +=
+   CONFIG += c++14
 }
 
 RESOURCES += \
