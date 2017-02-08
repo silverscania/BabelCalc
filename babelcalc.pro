@@ -12,7 +12,7 @@ HEADERS       = include/basicinput.h \
     include/modes.h \
     include/narrowlineedit.h \
     include/operators.h \
-    include/osxtransparencysupport.h \
+    include/OSXTransparencySupport.h \
     include/value.h
 
 SOURCES       = src/basicinput.cpp \
