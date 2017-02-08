@@ -21,6 +21,7 @@
 #include "value.h"
 #include <cmath>
 #include "modes.h"
+#include <string>
 
 constexpr double pi = 3.141592653589793238462643383279502884;
 constexpr double e = 2.71828182845904523536028747135266249775724709369995;
@@ -34,6 +35,8 @@ struct Operator {
 	void operator=(const Operator& x) = delete;
 
 	inline virtual ~Operator() {}
+
+	inline virtual std::string getOperatorString() { return "x"; }
 
 	AngleMode angleMode {AngleMode::Degrees};
 	const int precedence;
@@ -54,6 +57,7 @@ struct BinaryOperator : public Operator {
 	inline Value evaluate(const Value &lhs, const Value &rhs) const override { \
 		return Value(lhs.intVal Op rhs.intVal, lhs.floatVal Op rhs.floatVal, lhs.uIntVal Op rhs.uIntVal); \
 	} \
+	inline std::string getOperatorString() override { return #Op; } \
 };
 
 #define UNARY_OPERATOR(Type, Op) struct Type : public UnaryOperator { \
@@ -72,7 +76,7 @@ struct BinaryOperator : public Operator {
 	} \
 };
 
-//places signed int result into float (bitwise ops not supported for floats)
+//places signed int result into float (bitwise ops not supported for floats) TODO: why not support bitwise for floats?
 #define BITWISE_OPERATOR(Type, Op, PostOp, Precedence) struct Type : public BinaryOperator { \
 	inline Type() : BinaryOperator(Precedence) {} \
 	inline Value evaluate(const Value &lhs, const Value &rhs) const override { \

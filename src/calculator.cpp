@@ -18,6 +18,7 @@
 
 #include "calculator.h"
 #include <QTime>
+#include <iostream>
 
 Calculator::Calculator()
 	: randgen(QDateTime::currentMSecsSinceEpoch())
@@ -42,7 +43,7 @@ void Calculator::setInput(const Value& input)
 	}
 	else {
 		if(stack.back().type == CalcStackType::Operator ||
-			stack.back().type == CalcStackType::Bracket)
+			stack.back().type == CalcStackType::OpenBracket)
 		{
 			//if there is an operator or bracket stacked, then add a new value
 			stack.push_back(CalcStackItem(input));
@@ -63,7 +64,7 @@ void Calculator::inputEquals()
 	if(!stack.empty()) {
 		//if its a bracket or operator on the end, remove it
 		if(stack.back().type == CalcStackType::Operator ||
-			stack.back().type == CalcStackType::Bracket)
+			stack.back().type == CalcStackType::OpenBracket)
 		{
 			stack.pop_back();
 		}
@@ -150,41 +151,89 @@ void Calculator::inputC()
 
 void Calculator::inputOpenBracket()
 {
-	//stack.push_back(CalcStackItem());
+	//only allow brackets when there is an operator
+	if(!stack.empty() && stack.back().type == CalcStackType::Operator) {
+		stack.push_back(CalcStackItem::createOpenBracket());
+		emit nextInputClearsChanged(true);
+	}
 }
 
 void Calculator::inputCloseBracket()
 {
-
+	evaluateLastBracket();
+	//fire upated text event
+	emit displayValueChanged(stack.back().val, false);
 }
 
-void Calculator::evaluateAll()
+void Calculator::evaluateLastBracket()
 {
-	//todo
-	//first find innermost bracket
-	//evaluate
-	//delete range of bracket
-	//loop until only one item left
-	auto begin = stack.begin();
-	auto end = stack.end();
+	auto innermostBracket = std::find_if(stack.rbegin(), stack.rend(),
+										 [](auto x) { return x.type == CalcStackType::OpenBracket; }
+							);
+
+	if(innermostBracket == stack.rend()) {
+		return;
+	}
+
+	auto start = innermostBracket.base() - 1;
 
 	//copy range between brackets
-	auto bracketSection = std::vector<CalcStackItem>(begin, end);
+	auto bracketSection = std::vector<CalcStackItem>(start, stack.end());
 
 	//evaluate
 	Value val = evaluate(bracketSection);
 
 	//remove range and replace with result value
-	auto it = stack.erase(begin, end);
+	auto it = stack.erase(start, stack.end());
 	stack.insert(it, CalcStackItem(val));
+}
+
+void Calculator::evaluateAll()
+{
+	std::cout << "evaluate all:" << std::endl;
+	for(const auto& x : stack) {
+		std::cout << x;
+	}
+	std::cout << std::endl;
+
+	while(stack.size() > 1) {
+		//first find innermost bracket
+		auto lastBracket = std::find_if(stack.rbegin(), stack.rend(),
+								  [](auto x) { return x.type == CalcStackType::OpenBracket; }
+					);
+
+		//no brackets, just use whole array
+		auto begin = lastBracket == stack.rend() ? stack.begin() : lastBracket.base() - 1;
+
+		//copy range between brackets
+		auto bracketSection = std::vector<CalcStackItem>(begin, stack.end());
+
+		//evaluate
+		Value val = evaluate(bracketSection);
+
+		//remove range and replace with result value
+		auto it = stack.erase(begin, stack.end());
+		stack.insert(it, CalcStackItem(val));
+	}
 }
 
 Value Calculator::evaluate(std::vector<CalcStackItem>& section)
 {
+	std::cout << "evaluate:" << std::endl;
+	for(const auto& x : stack) {
+		std::cout << x;
+	}
+	std::cout << std::endl;
+
 	//BODMAS, evaluate in order or precedence 0 - 2
 	for(int precedence = 0; precedence <= 2; ++precedence) {
 		//evaluate left to right
 		for(auto it = section.cbegin(); it != section.cend(); ++it) {
+			//strip brackets
+			if((*it).type == CalcStackType::OpenBracket) {
+				it = section.erase(it);
+			}
+
 			//only interested in binary operators
 			auto op = dynamic_cast<BinaryOperator*>((*it).operater.get());
 			if(op == nullptr)
@@ -216,7 +265,27 @@ CalcStackItem::CalcStackItem(std::shared_ptr<Operator> operater) :
 {
 }
 
-CalcStackItem::CalcStackItem() :
-	type(CalcStackType::Bracket)
+CalcStackItem CalcStackItem::createOpenBracket()
 {
+	return CalcStackItem();
+}
+
+CalcStackItem::CalcStackItem() :
+	type(CalcStackType::OpenBracket)
+{
+}
+
+std::ostream & operator<<(std::ostream &os, const CalcStackItem &x)
+{
+	if(x.type == CalcStackType::OpenBracket) {
+		os << " ( ";
+	}
+	else if(x.type == CalcStackType::Operator) {
+		os << " " << x.operater->getOperatorString() << " ";
+	}
+	else if(x.type == CalcStackType::Value) {
+		os << x.val.floatVal;
+	}
+
+	return os;
 }

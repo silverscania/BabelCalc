@@ -284,11 +284,11 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 		gridLayout->addWidget(createButton<NegationOperator>		(tr("+/−")), row, col++);
 		gridLayout->addWidget(createButton<ModulusOperator>			(tr("mod")), row, col++);
+		gridLayout->addWidget(createButton							(tr("("), [=] {calculator->inputOpenBracket();}), row, col++);
+		gridLayout->addWidget(createButton							(tr(")"), [=] {calculator->inputCloseBracket();}), row, col++);
 		gridLayout->addWidget(createButton							(tr("x²"), [=] {}), row, col++);
-		gridLayout->addWidget(createButton							(tr("x³"), [=] {}), row, col++);
 		gridLayout->addWidget(createButton							(tr("xⁿ"), [=] {}), row, col++);
-		gridLayout->addWidget(createButton<ASinOperator>			(tr("sin⁻¹")), row, col++);
-		gridLayout->addWidget(createButton							(tr(""), [=] {}), row++, col++);
+		gridLayout->addWidget(createButton<ASinOperator>			(tr("sin⁻¹")), row++, col++);
 
 		col = 5;
 		gridLayout->addWidget(createButton<RotateLeftOperator>		(tr("rot<<")), row, col++);
@@ -500,6 +500,14 @@ bool GUI::eventFilter(QObject *obj, QEvent *event) {
 
 			case Qt::Key_Delete:
 				calculator->inputC();
+				break;
+
+			case Qt::Key_ParenLeft:
+				calculator->inputOpenBracket();
+				break;
+
+			case Qt::Key_ParenRight:
+				calculator->inputCloseBracket();
 				break;
 
 			default:

@@ -27,17 +27,24 @@
 #include "operators.h"
 #include "modes.h"
 
-enum class CalcStackType { Value, Operator, Bracket };
+enum class CalcStackType { Value, Operator, OpenBracket };
 
-struct CalcStackItem {
+class CalcStackItem {
+public:
+	Value val;
+	std::shared_ptr<Operator> operater;
+	CalcStackType type;
+
 	explicit CalcStackItem(const Value& val);
 	explicit CalcStackItem(std::shared_ptr<Operator> operater);
 	explicit CalcStackItem();
 
-	Value val;
-	std::shared_ptr<Operator> operater;
-	CalcStackType type;
+	static CalcStackItem createOpenBracket();
+
+private:
+	friend std::ostream & operator<<(std::ostream &os, const CalcStackItem& x);
 };
+
 
 class Calculator : public QObject {
 	Q_OBJECT
@@ -71,4 +78,5 @@ class Calculator : public QObject {
 
 		void evaluateAll();
 		Value evaluate(std::vector<CalcStackItem>& section);
+		void evaluateLastBracket();
 };
