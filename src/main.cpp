@@ -20,10 +20,13 @@
 
 #include "gui.h"
 #include "calculator.h"
-#include "osxtransparencysupport.h"
-#include <csignal>
 
+#include <csignal>
 #include <iostream>
+
+#ifdef Q_OS_MAC
+#include "osxtransparencysupport.h"
+#endif
 
 int main(int argc, char *argv[])
 {
