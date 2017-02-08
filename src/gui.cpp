@@ -389,7 +389,14 @@ QString GUI::inputBaseToString(int base) {
 }
 
 void GUI::inputDigit(const QString &str) {
-	findFocusedInput()->inputDigits(str);
+	auto* const focusedInput = findFocusedInput();
+
+	if(focusedInput == nullptr) {
+		qWarning("No input in focus, cannot input digit");
+		return;
+	}
+
+	focusedInput->inputDigits(str);
 }
 
 void GUI::addNewInputBase(Input* input, bool canDisable, bool enabled)
