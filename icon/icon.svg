@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="136.41521"
-     inkscape:cy="50.748997"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="0.56472903"
+     inkscape:cy="40.564026"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -54,7 +54,7 @@
      id="layer1"
      transform="translate(0,-974.40945)">
     <g
-       transform="translate(-63.667186,745.46632)"
+       transform="matrix(0.51179214,0,0,0.51179214,-10.679133,875.61494)"
        id="g1348">
       <path
          style="fill:#fb2a0b;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"

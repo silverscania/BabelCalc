@@ -32,6 +32,8 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 ##### Dependencies
 * Qt 5.5.1
 * A compiler that supports C++14 
+* ImageMagick 7.0+
+* Python 2.7
 
 ##### Supported platforms
 * OSX 10.11+

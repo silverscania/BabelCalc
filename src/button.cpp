@@ -23,6 +23,6 @@
 Button::Button(const QString &text, QWidget *parent)
 	: QPushButton(parent)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    setText(text);
+	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+	setText(text);
 }

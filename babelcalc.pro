@@ -25,6 +25,13 @@ SOURCES       = src/basicinput.cpp \
     src/main.cpp \
     src/narrowlineedit.cpp
 
+iconTarget.target = iconDummy
+iconTarget.depends =
+iconTarget.commands =	cd $$_PRO_FILE_PWD_/icon/ && python generateIconFiles.py
+
+QMAKE_EXTRA_TARGETS += iconTarget
+PRE_TARGETDEPS = iconDummy
+
 # install
 target.path = /Applications/BabelCalc
 INSTALLS += target
@@ -39,11 +46,18 @@ macx: {
     #c++14 workaround http://lists.qt-project.org/pipermail/qt-creator/2015-July/004848.html
     QMAKE_CXXFLAGS_CXX11 = -std=c++14 -stdlib=libc++
     CONFIG += c++11
+
+	#ICON = icon/icon.icns
 }
 
 #linux but not mac
 unix:!macx {
    CONFIG += c++14
+}
+
+#windows icon
+win32: {
+	RC_FILE = icon/icon.rc
 }
 
 RESOURCES += \
