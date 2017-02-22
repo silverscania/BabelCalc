@@ -61,10 +61,6 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	//setWindowFlags(Qt::Widget | Qt::FramelessWindowHint); //commented: (makes window transparent on windows)
 	//setAttribute(Qt::WA_NoSystemBackground, true);
 
-#ifdef Q_MAC_OS
-	setAttribute( Qt::WA_TranslucentBackground );
-#endif
-
 	int rowCount = 0;
 
 	QFontDatabase::addApplicationFont ( ":/font/Source Code Pro No Dot ExtraLight.ttf" );

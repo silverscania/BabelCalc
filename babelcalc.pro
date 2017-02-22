@@ -25,12 +25,12 @@ SOURCES       = src/basicinput.cpp \
     src/main.cpp \
     src/narrowlineedit.cpp
 
-iconTarget.target = iconDummy
-iconTarget.depends =
-iconTarget.commands =	cd $$_PRO_FILE_PWD_/icon/ && python generateIconFiles.py
+#iconTarget.target = icon/tmp/icon.icns
+#iconTarget.depends =
+#iconTarget.commands = cd $${PWD}/icon/ && python generateIconFiles.py
 
-QMAKE_EXTRA_TARGETS += iconTarget
-PRE_TARGETDEPS = iconDummy
+#QMAKE_EXTRA_TARGETS += iconTarget
+#PRE_TARGETDEPS = iconDummy
 
 # install
 target.path = /Applications/BabelCalc
@@ -47,7 +47,7 @@ macx: {
     QMAKE_CXXFLAGS_CXX11 = -std=c++14 -stdlib=libc++
     CONFIG += c++11
 
-	#ICON = icon/icon.icns
+	ICON = $${PWD}/icon/tmp/icon.icns
 }
 
 #linux but not mac
