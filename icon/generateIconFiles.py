@@ -21,6 +21,10 @@ def exportWindowsIcons():
 		 "tmp/icon.ico"],
 		stdout=subprocess.PIPE)
 	result = proc.communicate()[0] #wait
+	
+	with open('tmp/icon.rc', 'w') as resFile:
+		resFile.write('IDI_ICON1\tICON\tDISCARDABLE\t"icon.ico"\n')
+		resFile.close()
 
 def exportMacIcons():
 	folder = "tmp/icon.iconset"
