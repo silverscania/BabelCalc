@@ -35,9 +35,9 @@ int main(int argc, char *argv[])
 	Calculator calculator;
 	GUI gui(&calculator);
 
-    #ifdef Q_OS_MAC
+#ifdef Q_OS_MAC
 	OSXTransparencySupport osxts(&gui);
-    #endif
+#endif
 
 	gui.show();
 	return app.exec();

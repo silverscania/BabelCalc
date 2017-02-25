@@ -42,7 +42,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	QString styleSheet = QLatin1String(baseStyle.readAll());
 
 	//Append windows style
-#ifndef Q_MAC_OS
+#ifndef Q_OS_MAC
 	QFile winStyle(":/style/windowsstyle.qss");
 	winStyle.open(QFile::ReadOnly);
 	styleSheet += QLatin1String(winStyle.readAll());
@@ -60,6 +60,10 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 	//setWindowFlags(Qt::Widget | Qt::FramelessWindowHint); //commented: (makes window transparent on windows)
 	//setAttribute(Qt::WA_NoSystemBackground, true);
+
+#ifdef Q_OS_MAC
+	setAttribute( Qt::WA_TranslucentBackground );
+#endif
 
 	int rowCount = 0;
 
