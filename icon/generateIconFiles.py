@@ -65,7 +65,9 @@ def exportImage(xRes, yRes, folder="tmp", name="icon_{0}x{1}.png"):
 		result = proc.communicate()[0] #wait
 		print result
 	except Exception, e:
-		print "Couldn't run image magick (cmd:" + convert + "). Do you have it installed?"
+		print "Couldn't run image magick (cmd:" + convert + "). Do you have it installed and in your path?"
+		print "If you opened Qt Creator from your dock, then it may not have loaded your"
+		print "environment variables. Try running it from a terminal."
 		print str(e)
 		exit(1)
 
