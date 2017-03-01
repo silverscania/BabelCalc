@@ -289,8 +289,8 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		gridLayout->addWidget(createButton<ModulusOperator>			(tr("mod")), row, col++);
 		gridLayout->addWidget(createButton							(tr("("), [=] {calculator->inputOpenBracket();}), row, col++);
 		gridLayout->addWidget(createButton							(tr(")"), [=] {calculator->inputCloseBracket();}), row, col++);
-		gridLayout->addWidget(createButton							(tr("x²"), [=] {}), row, col++);
-		gridLayout->addWidget(createButton							(tr("xⁿ"), [=] {}), row, col++);
+		gridLayout->addWidget(createButton<SquaredOperator>			(tr("x²"), row, col++);
+		gridLayout->addWidget(createButton<PowerOperator>			(tr("xⁿ"), row, col++);
 		gridLayout->addWidget(createButton<ASinOperator>			(tr("sin⁻¹")), row++, col++);
 
 		col = 5;

@@ -250,6 +250,12 @@ struct ePowXOperator : public UnaryOperator {
 	}
 };
 
+struct SquaredOperator : public UnaryOperator {
+	inline Value evaluate(const Value &rhs) const override {
+		return Value(static_cast<CalcInt>(std::pow(lhs.intVal, 2)),	std::pow(lhs.intVal, 2), static_cast<CalcUInt>(std::pow(lhs.intVal, 2)));
+	}
+};
+
 ///Custom binary operators
 //struct ExponentialNotation : public BinaryOperator {
 //	inline Value evaluate(const Value& lhs, const Value& rhs) const override {
@@ -292,3 +298,11 @@ struct LogNOperator : public BinaryOperator {
 		return Value(static_cast<CalcInt>(std::log(lhs.intVal)/std::log(rhs.intVal)), std::log(lhs.floatVal)/std::log(rhs.floatVal), static_cast<CalcUInt>(std::log(lhs.uIntVal)/std::log(rhs.uIntVal)));
 	}
 };
+
+struct PowerOperator : public BinaryOperator {
+	inline PowerOperator() : BinaryOperator(0) {}
+	inline Value evaluate(const Value& lhs, const Value &rhs) const override {
+		return Value(static_cast<CalcInt>(std::pow(lhs.intVal, rhs.intVal), std::pow(lhs.floatVal, rhs.floatVal), static_cast<CalcUInt>(std::pow(lhs.uIntVal, rhs.uIntVal)));
+	}
+};
+

@@ -19,6 +19,7 @@
 #pragma once
 
 #include <cstring>
+#include <cstdint>
 
 using CalcFloat = double;
 using CalcInt = std::int64_t;
