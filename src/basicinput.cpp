@@ -61,12 +61,12 @@ void BasicInput::updateValidator()
 	constexpr char lowerAlph[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'}; //todo more
 	//constexpr char upperAlph[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'}; //todo more
 
-	//set line len //todo: need to set line length or just have more strict validator?
-	if(base == 16) {
-		lineEdit->setMaxLength(prefix.length() + 1 + 16); //todo: only correct for 64 bit
+	//set line len. Base 10 supports e notation and floating point so don't do a hard limit.
+	if(base == 10) {
+		lineEdit->setMaxLength(prefix.length() + 1 + GUI::DECIMAL_DISP_LEN + 5); // 5 digits for exp ("E+999")
 	}
 	else {
-		lineEdit->setMaxLength(prefix.length() + 1 + GUI::DECIMAL_DISP_LEN + 5); // 5 digits for exp ("E+999")
+		lineEdit->setMaxLength(getMaxLength());
 	}
 
 	const QString signedPrefix = mode == Mode::Signed ? "-?" : "";
@@ -86,4 +86,16 @@ void BasicInput::updateValidator()
 
 	const QRegExp regExp(pattern,Qt::CaseInsensitive);
 	lineEdit->setValidator(new QRegExpValidator(regExp));
+}
+
+/**
+ * @return Max length of an integer input based on base and bitWidth.
+ * Doesn't apply to base 10 floating point nums
+ */
+int BasicInput::getMaxLength()
+{
+	if(bitWidth == BitWidth::ThirtyTwo) {
+		CalcInt max = -0xFFFF'FFFF;
+	}
+	return 10;
 }

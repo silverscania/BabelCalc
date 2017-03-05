@@ -27,4 +27,5 @@ class BasicInput : public Input
 
 	protected:
 		void updateValidator() override;
+		int getMaxLength();
 };

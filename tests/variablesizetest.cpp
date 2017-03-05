@@ -81,6 +81,17 @@ private slots:
 		QVERIFY(static_cast<uint32_t>(c) == smallC);
 	}
 
+	void negatives()
+	{
+		SETUP(-0x7FFF'FFFF, 0);
+
+		c = a + b;
+		smallC = smallA + smallB;
+
+		QVERIFY(c != smallC);
+		QVERIFY(static_cast<uint32_t>(c) == smallC);
+	}
+
 };
 
 QTEST_MAIN(VariableSizeTest)

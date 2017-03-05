@@ -9,5 +9,5 @@ INCLUDEPATH += include/
 SOURCES = tests/variablesizetest.cpp
 
 # install
-target.path = $$[QT_INSTALL_EXAMPLES]/qtestlib/tutorial1
-INSTALLS += target
+#target.path = $$[QT_INSTALL_EXAMPLES]/qtestlib/tutorial1
+#INSTALLS += target

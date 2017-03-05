@@ -19,5 +19,5 @@
 #pragma once
 
 enum class Mode {Float, Unsigned, Signed, TwosComp};
-enum class Width {ThirtyTwo, SixtyFour};
+enum class BitWidth {ThirtyTwo, SixtyFour};
 enum class AngleMode {Radians, Degrees};

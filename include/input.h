@@ -38,6 +38,7 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 		void focus() const;
 		bool hasFocus() const;
 		void setMode(Mode mode);
+		void setBitWidth(BitWidth bitWidth);
 		void blink();
 
 		const int base;
@@ -59,6 +60,7 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 		NarrowLineEdit* lineEdit;
 		QLabel* label;
 		Mode mode;
+		BitWidth bitWidth;
 		Value value;
 		QPropertyAnimation* blinkAnim;
 

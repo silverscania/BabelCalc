@@ -189,3 +189,8 @@ void Input::setMode(Mode mode)
 	updateLabelText();
 	displayValueChanged(value, false); //update displayed value
 }
+
+void Input::setBitWidth(BitWidth bitWidth)
+{
+	this->bitWidth = bitWidth;
+}
