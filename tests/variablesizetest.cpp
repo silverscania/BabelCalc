@@ -3,6 +3,23 @@
 
 using namespace std;
 
+#define SETUP(valA, valB) \
+	CalcUInt a, b, c; \
+	uint32_t smallA, smallB, smallC; \
+	a = valA; \
+	b = valB; \
+	smallA = static_cast<uint32_t>(a); \
+	smallB = static_cast<uint32_t>(b); \
+
+
+#define SETUP_SIGNED(valA, valB) \
+	CalcInt a, b, c; \
+	int32_t smallA, smallB, smallC; \
+	a = valA; \
+	b = valB; \
+	smallA = static_cast<int32_t>(a); \
+	smallB = static_cast<int32_t>(b); \
+
 class VariableSizeTest: public QObject
 {
 	Q_OBJECT
@@ -11,14 +28,6 @@ private slots:
 	{
 		qDebug("called before everything else");
 	}
-
-#define SETUP(valA, valB) \
-	CalcUInt a, b, c; \
-	uint32_t smallA, smallB, smallC; \
-	a = valA; \
-	b = valB; \
-	smallA = static_cast<uint32_t>(a); \
-	smallB = static_cast<uint32_t>(b); \
 
 	void oneBigOneSmall()
 	{
@@ -83,13 +92,22 @@ private slots:
 
 	void negatives()
 	{
-		SETUP(-0x7FFF'FFFF, 0);
+		SETUP_SIGNED(-0x7FFFFFFF, 10);
 
 		c = a + b;
 		smallC = smallA + smallB;
 
-		QVERIFY(c != smallC);
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
+		QVERIFY(static_cast<int32_t>(c) == smallC);
+	}
+
+	void negatives2()
+	{
+		SETUP_SIGNED(0x7FFFFFFF, 0xFFFFFFFFFF);
+
+		c = a - b;
+		smallC = smallA - smallB;
+
+		QVERIFY(static_cast<int32_t>(c) == smallC);
 	}
 
 };
