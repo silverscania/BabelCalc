@@ -71,7 +71,7 @@ class Calculator : public QObject {
 	private:
 		Mode mode {Mode::TwosComp};
 		AngleMode angleMode {AngleMode::Degrees};
-		BitWidth width {BitWidth::SixtyFour};
+		BitWidth bitWidth {BitWidth::SixtyFour};
 
 		std::mt19937 randgen;
 		std::vector<CalcStackItem> stack;
@@ -79,4 +79,5 @@ class Calculator : public QObject {
 		void evaluateAll();
 		Value evaluate(std::vector<CalcStackItem>& section);
 		void evaluateLastBracket();
+		void emitDisplayValueChanged(Value val, bool userInput);
 };

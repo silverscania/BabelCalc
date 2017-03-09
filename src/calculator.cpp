@@ -188,6 +188,14 @@ void Calculator::evaluateLastBracket()
 	stack.insert(it, CalcStackItem(val));
 }
 
+void Calculator::emitDisplayValueChanged(Value val, bool userInput)
+{
+	if(bitWidth == BitWidth::SixtyFour)
+		emit displayValueChanged(val, userInput);
+	else
+		emit displayValueChanged(static_cast<val, userInput);
+}
+
 void Calculator::evaluateAll()
 {
 	std::cout << "evaluate all:" << std::endl;

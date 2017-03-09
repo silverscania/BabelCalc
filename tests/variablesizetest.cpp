@@ -1,6 +1,15 @@
 #include <QtTest/QtTest>
 #include "value.h"
 
+/**
+ * Test that we do need separate 32bit and 64bit types
+ * We could just do all operations on 64bit and cast and the
+ * result, but any failing tests here prove that won't work.
+ *
+ * Don't even bother testing floats == doubles because they
+ * would all fail.
+ */
+
 using namespace std;
 
 #define SETUP(valA, valB) \
@@ -10,15 +19,38 @@ using namespace std;
 	b = valB; \
 	smallA = static_cast<uint32_t>(a); \
 	smallB = static_cast<uint32_t>(b); \
+\
+	CalcInt sa, sb, sc; \
+	int32_t ssmallA, ssmallB, ssmallC; \
+	sa = valA; \
+	sb = valB; \
+	ssmallA = static_cast<int32_t>(sa); \
+	ssmallB = static_cast<int32_t>(sb);
+	//CalcFloat fa, fb, fc; \
+	//float fsmallA, fsmallB, fsmallC; \
+	//fa = valA; \
+	//fb = valB; \
+	//fsmallA = static_cast<float>(fa); \
+	//fsmallB = static_cast<float>(fb);
 
+#define OP(op) \
+	c = a op b; \
+	smallC = smallA op smallB; \
+	sc = sa op sb; \
+	ssmallC = ssmallA op ssmallB;
+	//fc = fa op fb; \
+	//fsmallC = fsmallA op fsmallB;
 
-#define SETUP_SIGNED(valA, valB) \
-	CalcInt a, b, c; \
-	int32_t smallA, smallB, smallC; \
-	a = valA; \
-	b = valB; \
-	smallA = static_cast<int32_t>(a); \
-	smallB = static_cast<int32_t>(b); \
+#define FUNC(func) \
+	c = func(a, b); \
+	smallC = func(smallA, smallB); \
+	sc = func(sa, sb); \
+	ssmallC = func(ssmallA, ssmallB);
+
+#define CHECK() \
+	QCOMPARE(static_cast<uint32_t>(c), smallC); \
+	QCOMPARE(static_cast<int32_t>(sc), ssmallC);
+	//QVERIFY(static_cast<float>(fc) != fsmallC);
 
 class VariableSizeTest: public QObject
 {
@@ -32,84 +64,68 @@ private slots:
 	void oneBigOneSmall()
 	{
 		SETUP(5623897562389, 2362304);
-
-		c = a * b;
-		smallC = smallA * smallB;
-
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
+		OP(*);
+		CHECK();
 	}
 
 	void twoSmall()
 	{
 		SETUP(234, 2456);
-
-		c = a * b;
-		smallC = smallA * smallB;
-
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
+		OP(*);
+		CHECK();
 	}
 
 	void twoBig()
 	{
 		SETUP(234523523452345, 2345235286783452345);
-
-		c = a * b;
-		smallC = smallA * smallB;
-
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
+		OP(*);
+		CHECK();
 	}
 
 	void oneBigOneSmallPow()
 	{
 		SETUP(12345, 2);
-
-		c = pow(a, b);
-		smallC = pow(a, b);
-
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
+		FUNC(pow);
+		CHECK();
 	}
 
 	void twoSmallPow()
 	{
 		SETUP(234, 2);
-
-		c = pow(a, b);
-		smallC = pow(smallA, smallB);
-
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
+		FUNC(pow);
+		CHECK();
 	}
 
+	/**
+	 * @brief This one fails
+	 */
 	void twoBigPow()
 	{
 		SETUP(123, 5);
-
-		c = pow(a, b);
-		smallC = pow(smallA, smallB);
-
-		QVERIFY(c != smallC);
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
+		FUNC(pow);
+		CHECK();
 	}
 
 	void negatives()
 	{
-		SETUP_SIGNED(-0x7FFFFFFF, 10);
-
-		c = a + b;
-		smallC = smallA + smallB;
-
-		QVERIFY(static_cast<int32_t>(c) == smallC);
+		SETUP(-0x7FFFFFFF, 10);
+		OP(+);
+		CHECK();
 	}
 
 	void negatives2()
 	{
-		SETUP_SIGNED(0x7FFFFFFF, 0xFFFFFFFFFF);
-
-		c = a - b;
-		smallC = smallA - smallB;
-
-		QVERIFY(static_cast<int32_t>(c) == smallC);
+		SETUP(0x7FFFFFFF, 0xFFFFFFFFFF);
+		OP(-);
+		CHECK();
 	}
 
+	void negatives3()
+	{
+		SETUP(0x7FFFFFFF, -0xFFFFFFFFFF);
+		OP(-);
+		CHECK();
+	}
 };
 
 QTEST_MAIN(VariableSizeTest)
