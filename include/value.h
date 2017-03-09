@@ -21,17 +21,17 @@
 #include <cstring>
 #include <cstdint>
 
-using CalcFloat = double;
+using CalcDouble = double;
 using CalcInt = std::int64_t;
 using CalcUInt = std::uint64_t;
 
 static_assert(sizeof(CalcInt) == sizeof(CalcUInt), "Types must all be 64 bits");
-static_assert(sizeof(CalcInt) == sizeof(CalcFloat), "Types must all be 64 bits");
+static_assert(sizeof(CalcInt) == sizeof(CalcDouble), "Types must all be 64 bits");
 static_assert(sizeof(CalcInt) == 64/8, "Types must all be 64 bits");
 
 
 struct Value {
-	inline Value(CalcInt intVal, CalcFloat floatVal, CalcUInt uIntVal) :
+	inline Value(CalcInt intVal, CalcDouble floatVal, CalcUInt uIntVal) :
 		intVal(intVal),
 		floatVal(floatVal),
 		uIntVal(uIntVal)
@@ -52,9 +52,9 @@ struct Value {
     {
     }
 
-	inline static CalcUInt floatToRaw(CalcFloat value) {
+	inline static CalcUInt floatToRaw(CalcDouble value) {
 		CalcUInt ret;
-		std::memcpy(&ret, &value, sizeof(CalcFloat));
+		std::memcpy(&ret, &value, sizeof(CalcDouble));
 		return ret;
 	}
 
@@ -64,9 +64,9 @@ struct Value {
 		return ret;
 	}
 
-	inline static CalcFloat rawToFloat(CalcUInt value) {
-		CalcFloat ret;
-		std::memcpy(&ret, &value, sizeof(CalcFloat));
+	inline static CalcDouble rawToFloat(CalcUInt value) {
+		CalcDouble ret;
+		std::memcpy(&ret, &value, sizeof(CalcDouble));
 		return ret;
 	}
 
@@ -77,6 +77,6 @@ struct Value {
 	}
 
 	CalcInt intVal;
-	CalcFloat floatVal;
+	CalcDouble floatVal;
 	CalcUInt uIntVal;
 };

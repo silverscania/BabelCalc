@@ -87,25 +87,25 @@ void Input::digitEdit(const QString&)
 	bool conversionOk = false;
 	if(mode == Mode::Signed) {
 		CalcInt val {inputText.toLongLong(&conversionOk, base)};
-		RHS = Value(val, static_cast<CalcFloat>(val), static_cast<CalcUInt>(val));
+		RHS = Value(val, static_cast<CalcDouble>(val), static_cast<CalcUInt>(val));
 	}
 	else if (mode == Mode::Unsigned) {
 		CalcUInt val {inputText.toULongLong(&conversionOk, base)};
-		RHS = Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
+		RHS = Value(static_cast<CalcInt>(val), static_cast<CalcDouble>(val), val);
 	}
 	else if(mode == Mode::TwosComp){ //twos comp
 		CalcUInt unsignedVal {inputText.toULongLong(&conversionOk, base)};
 		CalcInt val = Value::rawToInt(unsignedVal);
-		RHS = Value(val, static_cast<CalcFloat>(val), unsignedVal);
+		RHS = Value(val, static_cast<CalcDouble>(val), unsignedVal);
 	}
 	else if(mode == Mode::Float) {
 		if(base == 10) {
-			CalcFloat val = inputText.toDouble();
+			CalcDouble val = inputText.toDouble();
 			RHS = Value(static_cast<CalcInt>(val), val, static_cast<CalcUInt>(val));
 		}
 		else {
 			CalcUInt unsignedVal = inputText.toULongLong(&conversionOk, base);
-			CalcFloat val = Value::rawToFloat(unsignedVal);
+			CalcDouble val = Value::rawToFloat(unsignedVal);
 			RHS = Value(static_cast<CalcInt>(val), val, static_cast<CalcUInt>(val)); //todo what to do here with float to int overflows?
 		}
 	}
