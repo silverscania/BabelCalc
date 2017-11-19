@@ -72,12 +72,13 @@ void BasicInput::updateValidator()
 	const QString signedPrefix = mode == Mode::Signed ? "-?" : "";
 	QString pattern;
 
-	//set validator. Base 10 is a special case (supports floating point)
+	//set validator. Base 10 floating point is a special case (supports floating point)
 	if(base == 10 && mode == Mode::Float) {
 		pattern = QString("-?%1[0-9]+\\.?[0-9]*((e-)|(e))?[0-9]*").arg(prefix);
-		//pattern = todo support E notation for ints QString("%1%2[0-9]+e*-*[0-9]*").arg(signedPrefix, prefix);
 	}
 	else if(base <= 10) {
+		//TODO: pattern = support E notation for ints QString("%1%2[0-9]+e*-*[0-9]*").arg(signedPrefix, prefix);
+		//TODO: toULongLong() doesn't support e notation though...
 		pattern = QString("%3%1[0-%2]+").arg(prefix, QString(nums[base-1]), signedPrefix);
 	}
 	else {
@@ -94,8 +95,15 @@ void BasicInput::updateValidator()
  */
 int BasicInput::getMaxLength()
 {
+	//TODO: max length doesn't need to be set if input is converted
+	//TODO: to a number on every input. Only successful inputs need to
+	//TODO: update the box.
+	CalcInt max;
 	if(bitWidth == BitWidth::ThirtyTwo) {
-		CalcInt max = -0xFFFF'FFFF;
+		max = -0xFFFF'FFFF;
+	}
+	else  {
+		max = -0xFFFF'FFFF'FFFF'FFFF;
 	}
 	return 10;
 }

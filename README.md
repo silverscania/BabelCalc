@@ -19,6 +19,7 @@ The following features are an improvement, or are missing from other calculators
 * Cross platform
 * List of previous calculations (TODO)
 * Open source
+* Scientific notation for floating point input
 
 #### Non features
 The following features are not present in the calculator:
