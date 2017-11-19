@@ -1,8 +1,11 @@
+include(../src/babelcalc.pri)
+
 QT += widgets testlib
 QT       -= gui
 
 CONFIG   += console
 CONFIG   -= app_bundle
+CONFIG   += testcase
 
 #mac stuff
 macx: {
@@ -13,11 +16,12 @@ macx: {
 
 #linux but not mac
 unix:!macx {
-   CONFIG += c++14
+    CONFIG += c++14
 }
 
-INCLUDEPATH += include/
-SOURCES = tests/variablesizetest.cpp
+#INCLUDEPATH += include/
+SOURCES += \ #tests/variablesizetest.cpp \
+    calculatortest.cpp
 
 # install
 target.path = $$[QT_INSTALL_EXAMPLES]/qtestlib/tutorial1

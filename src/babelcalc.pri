@@ -1,28 +1,30 @@
 QT += widgets
 
-INCLUDEPATH += include
+INCLUDEPATH += $$PWD/../include
 
-HEADERS       += include/basicinput.h \
-    include/binaryinput.h \
-    include/button.h \
-    include/calculator.h \
-    include/gui.h \
-    include/horizontalbuttongroup.h \
-    include/input.h \
-    include/modes.h \
-    include/narrowlineedit.h \
-    include/operators.h \
-    include/osxtransparencysupport.h \
-    include/value.h
+HEADERS += \
+    $$PWD/../include/basicinput.h \
+    $$PWD/../include/binaryinput.h \
+    $$PWD/../include/button.h \
+    $$PWD/../include/calculator.h \
+    $$PWD/../include/gui.h \
+    $$PWD/../include/horizontalbuttongroup.h \
+    $$PWD/../include/input.h \
+    $$PWD/../include/modes.h \
+    $$PWD/../include/narrowlineedit.h \
+    $$PWD/../include/operators.h \
+    $$PWD/../include/osxtransparencysupport.h \
+    $$PWD/../include/value.h
 
-SOURCES       += src/basicinput.cpp \
-    src/binaryinput.cpp \
-    src/button.cpp \
-    src/calculator.cpp \
-    src/gui.cpp \
-    src/horizontalbuttongroup.cpp \
-    src/input.cpp \
-    src/narrowlineedit.cpp
+SOURCES += \
+    $$PWD/basicinput.cpp \
+    $$PWD/binaryinput.cpp \
+    $$PWD/button.cpp \
+    $$PWD/calculator.cpp \
+    $$PWD/gui.cpp \
+    $$PWD/horizontalbuttongroup.cpp \
+    $$PWD/input.cpp \
+    $$PWD/narrowlineedit.cpp
 
 #mac stuff
 macx: {
@@ -42,7 +44,7 @@ unix:!macx {
 }
 
 RESOURCES += \
-    resources/resources.qrc
+    $$PWD/../resources/resources.qrc
 
 OBJECTIVE_SOURCES += \
-   osxtransparencysupport.mm
+   $$PWD/osxtransparencysupport.mm

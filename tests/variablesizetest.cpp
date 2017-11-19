@@ -1,3 +1,21 @@
+// Copyright (C) 2017 James Clark <james@bitsofbeards.co.uk>
+//
+// This file is part of BabelCalc, a calculator that operates on
+// multiple numerical bases simultaneously.
+//
+// BabelCalc is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+//
+// BabelCalc is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with BabelCalc.  If not, see <http://www.gnu.org/licenses/>.
+
 #include <QtTest/QtTest>
 #include "value.h"
 
@@ -20,6 +38,20 @@ using namespace std;
 	smallA = static_cast<int32_t>(a); \
 	smallB = static_cast<int32_t>(b); \
 
+/**
+ * Set of tests to attempt to determine if it's neccessary
+ * to use separate 32bit and 64bit data types internally,
+ * or whether 64 bits can always be used, and to obtain the
+ * 32 bit value it can just be cast.
+ *
+ * If all of these tests pass (which they do so far),
+ * then the internal 32bit value can be eliminated. The only
+ * thing left to work out is whether they cover all cases...
+ *
+ * For example does multiplying two 32bit numbers together
+ * (with overflow) equal the same 64bit numbers multiplied
+ * together and then cast to a 32bit value.
+ */
 class VariableSizeTest: public QObject
 {
 	Q_OBJECT
@@ -112,5 +144,5 @@ private slots:
 
 };
 
-QTEST_MAIN(VariableSizeTest)
+//QTEST_MAIN(VariableSizeTest)
 #include "variablesizetest.moc"
