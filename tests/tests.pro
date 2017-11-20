@@ -1,11 +1,13 @@
-include(../src/babelcalc.pri)
-
 QT += widgets testlib
-QT       -= gui
+QT -= gui
 
 CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG   += testcase
+
+#Link with the babelcalc library
+LIBS += ../lib/liblib.a
+INCLUDEPATH += ../lib
 
 #mac stuff
 macx: {
@@ -19,7 +21,6 @@ unix:!macx {
     CONFIG += c++14
 }
 
-#INCLUDEPATH += include/
 SOURCES += \ #tests/variablesizetest.cpp \
     calculatortest.cpp
 
