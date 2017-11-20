@@ -23,6 +23,6 @@ unix:!macx {
 SOURCES += \ #tests/variablesizetest.cpp \
     calculatortest.cpp
 
-# install
-target.path = $$[QT_INSTALL_EXAMPLES]/qtestlib/tutorial1
-INSTALLS += target
+#Execute tests after linking
+unix:QMAKE_POST_LINK=./$$TARGET
+win32:QMAKE_POST_LINK=$${TARGET}.exe
