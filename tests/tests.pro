@@ -21,7 +21,8 @@ SOURCES += \ #tests/variablesizetest.cpp \
     deps/googletest/googlemock/src/gmock-all.cc \
     deps/googletest/googletest/src/gtest-all.cc \
     main.cpp \
-    testcalculator.cpp
+    testcalculator.cpp \
+    testvariablesizes.cpp
 
 #Execute tests after linking
 unix:QMAKE_POST_LINK=./$$TARGET

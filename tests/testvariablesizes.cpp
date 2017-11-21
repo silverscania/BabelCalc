@@ -16,10 +16,9 @@
 // You should have received a copy of the GNU General Public License
 // along with BabelCalc.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <QtTest/QtTest>
-#include "value.h"
+#include <gtest/gtest.h>
 
-using namespace std;
+#include "value.h"
 
 #define SETUP(valA, valB) \
 	CalcUInt a, b, c; \
@@ -52,97 +51,83 @@ using namespace std;
  * (with overflow) equal the same 64bit numbers multiplied
  * together and then cast to a 32bit value.
  */
-class VariableSizeTest: public QObject
+TEST(TestVariableSizes, oneBigOneSmall)
 {
-	Q_OBJECT
-private slots:
-	void initTestCase()
-	{
-		qDebug("called before everything else");
-	}
+	SETUP(5623897562389, 2362304);
 
-	void oneBigOneSmall()
-	{
-		SETUP(5623897562389, 2362304);
+	c = a * b;
+	smallC = smallA * smallB;
 
-		c = a * b;
-		smallC = smallA * smallB;
+	EXPECT_EQ(static_cast<uint32_t>(c), smallC);
+}
 
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
-	}
+TEST(TestVariableSizes, twoSmall)
+{
+	SETUP(234, 2456);
 
-	void twoSmall()
-	{
-		SETUP(234, 2456);
+	c = a * b;
+	smallC = smallA * smallB;
 
-		c = a * b;
-		smallC = smallA * smallB;
+	EXPECT_EQ(static_cast<uint32_t>(c), smallC);
+}
 
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
-	}
+TEST(TestVariableSizes, twoBig)
+{
+	SETUP(234523523452345, 2345235286783452345);
 
-	void twoBig()
-	{
-		SETUP(234523523452345, 2345235286783452345);
+	c = a * b;
+	smallC = smallA * smallB;
 
-		c = a * b;
-		smallC = smallA * smallB;
+	EXPECT_EQ(static_cast<uint32_t>(c), smallC);
+}
 
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
-	}
+TEST(TestVariableSizes, oneBigOneSmallPow)
+{
+	SETUP(12345, 2);
 
-	void oneBigOneSmallPow()
-	{
-		SETUP(12345, 2);
+	c = pow(a, b);
+	smallC = pow(a, b);
 
-		c = pow(a, b);
-		smallC = pow(a, b);
+	EXPECT_EQ(static_cast<uint32_t>(c), smallC);
+}
 
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
-	}
+TEST(TestVariableSizes, twoSmallPow)
+{
+	SETUP(234, 2);
 
-	void twoSmallPow()
-	{
-		SETUP(234, 2);
+	c = pow(a, b);
+	smallC = pow(smallA, smallB);
 
-		c = pow(a, b);
-		smallC = pow(smallA, smallB);
+	EXPECT_EQ(static_cast<uint32_t>(c), smallC);
+}
 
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
-	}
+TEST(TestVariableSizes, twoBigPow)
+{
+	SETUP(123, 5);
 
-	void twoBigPow()
-	{
-		SETUP(123, 5);
+	c = pow(a, b);
+	smallC = pow(smallA, smallB);
 
-		c = pow(a, b);
-		smallC = pow(smallA, smallB);
+	EXPECT_NE(c, smallC);
+	EXPECT_EQ(static_cast<uint32_t>(c), smallC);
+}
 
-		QVERIFY(c != smallC);
-		QVERIFY(static_cast<uint32_t>(c) == smallC);
-	}
+TEST(TestVariableSizes, negatives)
+{
+	SETUP_SIGNED(-0x7FFFFFFF, 10);
 
-	void negatives()
-	{
-		SETUP_SIGNED(-0x7FFFFFFF, 10);
+	c = a + b;
+	smallC = smallA + smallB;
 
-		c = a + b;
-		smallC = smallA + smallB;
+	EXPECT_EQ(static_cast<int32_t>(c), smallC);
+}
 
-		QVERIFY(static_cast<int32_t>(c) == smallC);
-	}
+TEST(TestVariableSizes, negatives2)
+{
+	SETUP_SIGNED(0x7FFFFFFF, 0xFFFFFFFFFF);
 
-	void negatives2()
-	{
-		SETUP_SIGNED(0x7FFFFFFF, 0xFFFFFFFFFF);
+	c = a - b;
+	smallC = smallA - smallB;
 
-		c = a - b;
-		smallC = smallA - smallB;
-
-		QVERIFY(static_cast<int32_t>(c) == smallC);
-	}
-
-};
-
-//QTEST_MAIN(VariableSizeTest)
-#include "variablesizetest.moc"
+	EXPECT_EQ(static_cast<int32_t>(c), smallC);
+}
