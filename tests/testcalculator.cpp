@@ -16,25 +16,24 @@
 // You should have received a copy of the GNU General Public License
 // along with BabelCalc.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <QtTest/QtTest>
+#include <gtest/gtest.h>
+
 #include "value.h"
 #include "calculator.h"
 
-using namespace std;
-
 /**
- * Test the calculator class without any of the GUI stuff
+ * Test harness to enable testing the Calculator class
+ * without any of the GUI stuff.
  */
-class CalculatorTest: public QObject
-{
-	Q_OBJECT
-
-	//Keep this for all tests. It's better to test that
-	//actions don't have any side effects than to test
-	//a brand new Calculator for every test.
+class CalculatorTest : public ::testing::Test, public QObject{
+public:
 	Calculator calculator;
 	Value lastDisplayValue;
 	bool lastUserInputValue;
+
+	virtual void SetUp() {
+		connect(&calculator, &Calculator::displayValueChanged, this, &CalculatorTest::calculatorDisplayValueChanged);
+	}
 
 private slots:
 	void calculatorDisplayValueChanged(const Value& value, bool userInput)
@@ -42,24 +41,18 @@ private slots:
 		lastDisplayValue = value;
 		lastUserInputValue = userInput;
 	}
-
-	void initTestCase()
-	{
-		qDebug("called before everything else");
-		//connect(calculator, &Calculator::displayValueChanged, this, &CalculatorTest::calculatorDisplayValueChanged);
-	}
-
-	void oneBigOneSmall()
-	{
-		Value input(100, 0.0f, 0);
-		calculator.setInput(Value(100, 0.0f, 0));
-		calculator.inputOperator(std::make_unique<SubtractionOperator>());
-		calculator.setInput(Value(2, 0.0f, 0));
-		calculator.inputEquals();
-
-		Q_ASSERT(98 == 98); //lastDisplayValue.intVal == 98);
-	}
 };
 
-QTEST_MAIN(CalculatorTest)
-#include "calculatortest.moc"
+/**
+ * Tests follow
+ */
+
+TEST_F(CalculatorTest, TestSubtract) {
+	calculator.setInput(Value(100, 0.0f, 0));
+	calculator.inputOperator(std::make_unique<SubtractionOperator>());
+	calculator.setInput(Value(2, 0.0f, 0));
+	calculator.inputEquals();
+
+	EXPECT_EQ(lastDisplayValue.intVal, 98);
+}
+
