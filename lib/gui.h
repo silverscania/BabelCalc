@@ -73,6 +73,7 @@ private:
 	Calculator* calculator;
 	Input* activeInput;
 	QMenu* settingsMenu;
+	QBoxLayout* mainCalculatorLayout;
 	QBoxLayout* mainLayout;
 	QAction* settingsMenuSeparator;
 

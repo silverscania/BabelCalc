@@ -52,12 +52,17 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 	QWidget *mainWidget = new QWidget;
 	setCentralWidget(mainWidget);
-	mainLayout = new QVBoxLayout;
-	mainLayout->setSpacing(0);
-	mainLayout->setMargin(0);
-	mainWidget->setObjectName("Window");
-	mainWidget->setLayout(mainLayout);
 
+	mainLayout = new QHBoxLayout;
+	mainWidget->setLayout(mainLayout);
+	mainWidget->setObjectName("Window");
+
+	mainCalculatorLayout = new QVBoxLayout;
+	mainCalculatorLayout->setSpacing(0);
+	mainCalculatorLayout->setMargin(0);
+
+	mainLayout->addLayout(mainCalculatorLayout);
+	//mainLayout->addWidget(new QTextEdit);
 	//setWindowFlags(Qt::Widget | Qt::FramelessWindowHint); //commented: (makes window transparent on windows)
 	//setAttribute(Qt::WA_NoSystemBackground, true);
 
@@ -117,7 +122,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	toggleButtonRow->layout()->setSpacing(0);
 	toggleButtonRow->layout()->setMargin(0);
 	toggleButtonRow->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
-	mainLayout->addWidget(toggleButtonRow);
+	mainCalculatorLayout->addWidget(toggleButtonRow);
 
 
 	QSizePolicy toggleSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
@@ -376,7 +381,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	QWidget* gridWidg = new QWidget;
 	gridWidg->setObjectName("MainGrid");
 	gridWidg->setLayout(gridLayout);
-	mainLayout->addWidget(gridWidg);
+	mainCalculatorLayout->addWidget(gridWidg);
 
 	installEventFilter(this);
 }
@@ -412,8 +417,8 @@ void GUI::addNewInputBase(Input* input, bool canDisable, bool enabled)
 	inputs[input->base] = input;
 
 	if(enabled) {
-		const int index = mainLayout->count() - 3;
-		mainLayout->insertWidget(index, input);
+		const int index = mainCalculatorLayout->count() - 3;
+		mainCalculatorLayout->insertWidget(index, input);
 	}
 
 	//menu item
@@ -438,11 +443,11 @@ void GUI::setInputBaseEnabled(int base, bool enabled)
 	Input* inp = findInputForBase(base);
 	if(inp) {
 		if(enabled) {
-			const int index = mainLayout->count() - 3;
-			mainLayout->insertWidget(index, inp);
+			const int index = mainCalculatorLayout->count() - 3;
+			mainCalculatorLayout->insertWidget(index, inp);
 		}
 		else {
-			mainLayout->removeWidget(inp);
+			mainCalculatorLayout->removeWidget(inp);
 			inp->setParent(nullptr);
 		}
 	}

@@ -4,7 +4,10 @@ include(../c++14.pri)
 INCLUDEPATH += ../lib
 SOURCES += main.cpp
 
+#Use libs and pre_targetdeps. pre_targetdeps indicates that we're linking
+#with a statis library and this project should be rebuild every time liblib changes.
 LIBS += ../lib/liblib.a
+PRE_TARGETDEPS = ../lib/liblib.a
 
 QMAKE_EXTRA_TARGETS += iconTarget
 
