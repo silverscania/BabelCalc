@@ -51,7 +51,7 @@ BinaryInput::BinaryInput(Mode mode) :
 
 	//binary markers
 	QString binaryMarkerString = QString("63     56 %1 48 %1 40 %1 32 %1 24 %1 16 %2 8 %2 0").arg("      ", "       ");
-	auto binaryMarker = new QLabel(binaryMarkerString);
+	binaryMarker = new QLabel(binaryMarkerString);
 	//binaryMarker->setReadOnly(true);
 	//binaryMarker->setFont(font);
 	binaryMarker->setAlignment(Qt::AlignRight);
@@ -59,6 +59,22 @@ BinaryInput::BinaryInput(Mode mode) :
     binaryMarker->setObjectName("Binary");
 	grid->addWidget(binaryMarker, 1, 1);
 
+}
+
+/**
+ * When in human repr mode, the binary display removes
+ * the bit position markers because the decimal place
+ * will cause the number to shift an arbitrary number of
+ * digits to the left.
+ */
+void BinaryInput::setReprMode(ReprMode mode)
+{
+	if(mode == ReprMode::Human) {
+		binaryMarker->setVisible(false);
+	}
+	else {
+		binaryMarker->setVisible(true);
+	}
 }
 
 void BinaryInput::displayValueChanged(const Value &value, bool userInput)
@@ -73,20 +89,46 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 	QString sign;
 	QString binary;
 
-	if(mode == Mode::Signed) {
-		sign = value.intVal < 0 ? "-" : "";
-		binary = QString("%1").arg(std::abs(value.intVal), 64, base, QLatin1Char('0'));
+	if(reprMode == ReprMode::Human) {
+		switch (mode) {
+			case Mode::Signed:
+				sign = value.intVal < 0 ? "-" : "";
+				binary = QString("%1").arg(std::abs(value.intVal), 64, base, QLatin1Char('0'));
+				break;
+			case Mode::Unsigned:
+				binary = QString("%1").arg(value.uIntVal, 64, base, QLatin1Char('0'));
+				break;
+
+			case Mode::Float:
+				//TODO: convert binary to human readable type float (1011.11101)
+				break;
+			default:
+				Q_ASSERT(false);
+				break;
+		}
 	}
-	else if(mode == Mode::Unsigned) {
-		binary = QString("%1").arg(value.uIntVal, 64, base, QLatin1Char('0'));
-	}
-	else if(mode == Mode::TwosComp){ //SignMode::TwosComp
-		auto nosign = reinterpret_cast<const CalcUInt*>(&(value.intVal));
-		binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
-	}
-	else {
-		auto nosign = reinterpret_cast<const CalcUInt*>(&value.floatVal);
-		binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
+	else { //Machine version
+		switch (mode) {
+			case Mode::Signed:
+			{
+				auto nosign = reinterpret_cast<const CalcUInt*>(&(value.intVal));
+				binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
+				break;
+			}
+			case Mode::Unsigned:
+				binary = QString("%1").arg(value.uIntVal, 64, base, QLatin1Char('0'));
+				break;
+
+			case Mode::Float:
+			{
+				auto nosign = reinterpret_cast<const CalcUInt*>(&(value.floatVal));
+				binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
+				break;
+			}
+			default:
+				Q_ASSERT(false);
+				break;
+		}
 	}
 
 	for(int i = 4; i < binary.length(); i+=5) {

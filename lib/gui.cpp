@@ -19,11 +19,13 @@
 #include <cmath>
 
 #include "button.h"
+#include "calculationhistoryview.h"
 #include "gui.h"
 #include "calculator.h"
 #include <QButtonGroup>
 #include "horizontalbuttongroup.h"
 #include "basicinput.h"
+#include "base10input.h"
 #include "binaryinput.h"
 #include "narrowlineedit.h"
 
@@ -54,6 +56,9 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	setCentralWidget(mainWidget);
 
 	mainLayout = new QHBoxLayout;
+	mainLayout->setSpacing(0);
+	mainLayout->setMargin(0);
+
 	mainWidget->setLayout(mainLayout);
 	mainWidget->setObjectName("Window");
 
@@ -62,7 +67,10 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	mainCalculatorLayout->setMargin(0);
 
 	mainLayout->addLayout(mainCalculatorLayout);
-	//mainLayout->addWidget(new QTextEdit);
+
+	calculationHistoryView = new CalculationHistoryView;
+	mainLayout->addWidget(calculationHistoryView);
+
 	//setWindowFlags(Qt::Widget | Qt::FramelessWindowHint); //commented: (makes window transparent on windows)
 	//setAttribute(Qt::WA_NoSystemBackground, true);
 
@@ -98,7 +106,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		connect(clear, &QAction::triggered, this, &GUI::clearCustomBaseList);
 	}
 
-	addNewInputBase(new BasicInput(10, Mode::Signed, inputBaseToString(10)), false, true);
+	addNewInputBase(new Base10Input(10, Mode::Signed, inputBaseToString(10)), false, true);
 	addNewInputBase(new BasicInput(16, Mode::TwosComp, inputBaseToString(16), "0x"), false, true);
 	addNewInputBase(new BasicInput(8, Mode::TwosComp, inputBaseToString(8)), true, false);
 	addNewInputBase(new BinaryInput(Mode::TwosComp), false, true);
@@ -149,11 +157,13 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 						inp.second->setMode(lastIntMode);
 				}
 				intModeToggleGroup->setEnabled(true);
+				floatModeToggleGroup->setEnabled(false);
 			}});
 		connect(radio2, &QRadioButton::toggled, [=](bool toggled){if(toggled) {
 				calculator->setMode(Mode::Float);
 				for(const auto inp : inputs) inp.second->setMode(Mode::Float);
 				intModeToggleGroup->setEnabled(false);
+				floatModeToggleGroup->setEnabled(true);
 			}});
 		toggleButtonRow->layout()->addWidget(groupBox);
 	}
@@ -228,6 +238,40 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		}});
 
 		toggleButtonRow->layout()->addWidget(intModeToggleGroup);
+	}
+
+	//float: actual or binary representation
+	{
+		floatModeToggleGroup = new HorizontalButtonGroup();
+		QPushButton *radio1 = new QPushButton(tr("human repr"));
+		QPushButton *radio2 = new QPushButton(tr("machine repr"));
+		radio1->setSizePolicy(toggleSizePolicy);
+		radio2->setSizePolicy(toggleSizePolicy);
+		floatModeToggleGroup->addButton(radio1);
+		floatModeToggleGroup->addButton(radio2);
+
+		floatModeToggleGroup->layout()->setAlignment(radio2, Qt::AlignLeft);
+		floatModeToggleGroup->setEnabled(false);
+
+		radio1->setChecked(true);
+		//groupBox->setSizePolicy(toggleSizePolicy); //comment this so last one expands to fill remaining space
+		connect(radio1, &QRadioButton::toggled, [=](bool toggled) { if(toggled) {
+				lastFloatMode = ReprMode::Human;
+				//calculator->setMode(Mode::Unsigned);
+				for(const auto inp : inputs) {
+					inp.second->setFloatMode(ReprMode::Human);
+				}
+		}});
+
+		connect(radio2, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
+				lastFloatMode = ReprMode::Machine;
+				//calculator->setMode(Mode::Signed);
+				for(const auto inp : inputs) {
+					inp.second->setFloatMode(ReprMode::Machine);
+				}
+		}});
+
+		toggleButtonRow->layout()->addWidget(floatModeToggleGroup);
 	}
 
 	//deg/rad bit toggle
@@ -409,10 +453,10 @@ void GUI::inputDigit(const QString &str) {
 
 void GUI::addNewInputBase(Input* input, bool canDisable, bool enabled)
 {
-	//decimal display row
 	connect(calculator, &Calculator::displayValueChanged, input, &Input::displayValueChanged);
 	connect(calculator, &Calculator::nextInputClearsChanged, input, &Input::setNextInputClears);
 	connect(input, &Input::inputChanged, calculator, &Calculator::setInput);
+	connect(input, &Input::inputChanged, calculationHistoryView, &CalculationHistoryView::setInput);
 	input->setObjectName("Input");
 	inputs[input->base] = input;
 

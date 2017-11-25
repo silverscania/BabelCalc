@@ -20,15 +20,21 @@
 
 #include "input.h"
 
+class QLabel;
+
 class BinaryInput : public Input
 {
 	public:
 		BinaryInput(Mode mode);
+		void setReprMode(ReprMode mode) override;
 
 	public slots:
 		void displayValueChanged(const Value& value, bool userInput) override;
 
 	protected:
 		void updateValidator() override;
+
+	private:
+		QLabel *binaryMarker;
 };
 

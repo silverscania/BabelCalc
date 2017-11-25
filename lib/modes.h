@@ -18,6 +18,29 @@
 
 #pragma once
 
-enum class Mode {Float, Unsigned, Signed, TwosComp};
+/**
+ * In theory these modes are the ones that actually affect the outcome of calculations.
+ * For example multiplication only reuturns the same signed and unsigned value for the
+ * low (16 bits) half of a 32 bit value.
+ * Because the imult instruction must be used to get the full 32bit result, both the
+ * signed and unsigned values must be stored. Addition and subtraction would
+ * be the same so it's unneccesary for this case.
+ */
+enum class Mode {Float, Unsigned, Signed};
+
+/**
+ * This enum determines whether floats are displayed in human readable
+ * form (in any base). For example 10.5 or 0xA.8
+ *
+ * Or whether they are displayed in machine form, which would be the binary representation
+ * of IEEE-745.
+ *
+ * For signed ints it determines whether they are displayed with a ± sign (Human) or wether
+ * they are displayed as twos complement (Machine).
+ *
+ * For unsigned ints there is no difference...
+ */
+enum class ReprMode {Human, Machine};
+
 enum class BitWidth {ThirtyTwo, SixtyFour};
 enum class AngleMode {Radians, Degrees};

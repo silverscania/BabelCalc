@@ -21,6 +21,7 @@
 #include <cstring>
 #include <cstdint>
 
+//using CalcFloat = float; TODO: add support for 32bit floats
 using CalcFloat = double;
 using CalcInt = std::int64_t;
 using CalcUInt = std::uint64_t;

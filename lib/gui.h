@@ -31,6 +31,7 @@ QT_END_NAMESPACE
 struct Value;
 class Input;
 class HorizontalButtonGroup;
+class CalculationHistoryView;
 
 class GUI : public QMainWindow
 {
@@ -70,8 +71,10 @@ private:
 
 	QLineEdit* binaryDisplay;
 	HorizontalButtonGroup* intModeToggleGroup;
+	HorizontalButtonGroup* floatModeToggleGroup;
 	Calculator* calculator;
 	Input* activeInput;
+	CalculationHistoryView* calculationHistoryView;
 	QMenu* settingsMenu;
 	QBoxLayout* mainCalculatorLayout;
 	QBoxLayout* mainLayout;
@@ -81,6 +84,7 @@ private:
 	std::map<int, QAction*> settingsMenuBases;
 
 	Mode lastIntMode;
+	ReprMode lastFloatMode;
 	QSettings settings;
 };
 

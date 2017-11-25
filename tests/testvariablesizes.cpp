@@ -131,3 +131,13 @@ TEST(TestVariableSizes, negatives2)
 
 	EXPECT_EQ(static_cast<int32_t>(c), smallC);
 }
+
+TEST(TestVariableSizes, multiplySigned)
+{
+	SETUP_SIGNED(-1, 0xFFFFFFFFFF);
+
+	c = a - b;
+	smallC = smallA - smallB;
+
+	EXPECT_EQ(static_cast<int32_t>(c), smallC);
+}

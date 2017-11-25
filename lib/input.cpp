@@ -132,7 +132,12 @@ void Input::updateLabelText()
 
 	switch (mode) {
 		case Mode::Float:
-			signModeName = tr("float");
+			if(reprMode == ReprMode::Human) {
+				signModeName = tr("float - human");
+			}
+			else {
+				signModeName = tr("float - machine");
+			}
 			break;
 		case Mode::Signed:
 			signModeName = tr("signed");
@@ -190,7 +195,16 @@ void Input::setMode(Mode mode)
 	displayValueChanged(value, false); //update displayed value
 }
 
+void Input::setReprMode(ReprMode mode)
+{
+	this->reprMode = mode;
+	updateValidator();
+	updateLabelText();
+	displayValueChanged(value, false); //update displayed value
+}
+
 void Input::setBitWidth(BitWidth bitWidth)
 {
 	this->bitWidth = bitWidth;
 }
+

@@ -69,7 +69,7 @@ class Calculator : public QObject {
 		void nextInputClearsChanged(bool inputClears);
 
 	private:
-		Mode mode {Mode::TwosComp};
+		Mode mode {Mode::Signed};
 		AngleMode angleMode {AngleMode::Degrees};
 		BitWidth width {BitWidth::SixtyFour};
 

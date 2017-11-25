@@ -16,7 +16,9 @@ HEADERS += \
     narrowlineedit.h \
     operators.h \
     osxtransparencysupport.h \
-    value.h
+    value.h \
+    calculationhistoryview.h \
+    base10input.h
 
 SOURCES += \
     basicinput.cpp \
@@ -26,7 +28,9 @@ SOURCES += \
     gui.cpp \
     horizontalbuttongroup.cpp \
     input.cpp \
-    narrowlineedit.cpp
+    narrowlineedit.cpp \
+    calculationhistoryview.cpp \
+    base10input.cpp
 
 OBJECTIVE_SOURCES += \
    osxtransparencysupport.mm
