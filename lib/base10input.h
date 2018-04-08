@@ -14,7 +14,8 @@
 class Base10Input : public BasicInput
 {
 	public:
-		Base10Input();
+		Base10Input(Mode mode, const QString& labelText);
+
 		void setReprMode(ReprMode mode) override;
 };
 

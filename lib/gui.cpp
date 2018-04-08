@@ -32,7 +32,8 @@
 GUI::GUI(Calculator* calc, QWidget* parent)
 	: QMainWindow(parent),
 	  calculator(calc),
-	  lastIntMode(Mode::TwosComp),
+	  lastIntMode(Mode::Signed),
+	  lastReprMode(ReprMode::Human),
 	  settings("Bits Of Beards", "BabelCalc")
 {
 	//purple transparent gradient effect TODO use for windows
@@ -106,10 +107,10 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		connect(clear, &QAction::triggered, this, &GUI::clearCustomBaseList);
 	}
 
-	addNewInputBase(new Base10Input(10, Mode::Signed, inputBaseToString(10)), false, true);
-	addNewInputBase(new BasicInput(16, Mode::TwosComp, inputBaseToString(16), "0x"), false, true);
-	addNewInputBase(new BasicInput(8, Mode::TwosComp, inputBaseToString(8)), true, false);
-	addNewInputBase(new BinaryInput(Mode::TwosComp), false, true);
+	addNewInputBase(new Base10Input(/*10,*/ Mode::Signed, inputBaseToString(10)), false, true);
+	addNewInputBase(new BasicInput(16, Mode::Signed, inputBaseToString(16), "0x"), false, true);
+	addNewInputBase(new BasicInput(8, Mode::Signed, inputBaseToString(8)), true, false);
+	addNewInputBase(new BinaryInput(Mode::Signed), false, true);
 	//setInputBaseEnabled(8, false); //octal off by default
 
 	for(int base = 2; base <= 26; ++base) {
@@ -117,7 +118,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		if(settings.contains(baseName)) {
 			const bool enabled = settings.value(baseName, false).toBool();
 			if(findInputForBase(base) == nullptr) {
-				addNewInputBase(new BasicInput(base, Mode::TwosComp, inputBaseToString(base)), true, enabled);
+				addNewInputBase(new BasicInput(base, Mode::Signed, inputBaseToString(base)), true, enabled);
 			}
 
 			setInputBaseEnabled(base, enabled);
@@ -195,18 +196,16 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		intModeToggleGroup = new HorizontalButtonGroup();
 		QPushButton *radio1 = new QPushButton(tr("unsigned"));
 		QPushButton *radio2 = new QPushButton(tr("signed"));
-		QPushButton *radio3 = new QPushButton(tr("2's comp"));
 		radio1->setSizePolicy(toggleSizePolicy);
 		radio2->setSizePolicy(toggleSizePolicy);
 		intModeToggleGroup->addButton(radio1);
 		intModeToggleGroup->addButton(radio2);
 		//groupBox->layout()->setAlignment(radio1, Qt::AlignLeft);
-		intModeToggleGroup->addButton(radio3);
 
 		intModeToggleGroup->layout()->setAlignment(radio2, Qt::AlignLeft);
 
 
-		radio3->setChecked(true);
+		radio2->setChecked(true);
 		//groupBox->setSizePolicy(toggleSizePolicy); //comment this so last one expands to fill remaining space
 		connect(radio1, &QRadioButton::toggled, [=](bool toggled) { if(toggled) {
 				lastIntMode = Mode::Unsigned;
@@ -221,19 +220,6 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 				calculator->setMode(Mode::Signed);
 				for(const auto inp : inputs) {
 					inp.second->setMode(Mode::Signed);
-				}
-		}});
-
-		connect(radio3, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
-				lastIntMode = Mode::TwosComp;
-				calculator->setMode(Mode::TwosComp);
-				for(const auto inp : inputs) {
-					if(inp.first == 10) {
-						inp.second->setMode(Mode::Signed); //base ten never shows in twos complement
-					}
-					else {
-						inp.second->setMode(Mode::TwosComp);
-					}
 				}
 		}});
 
@@ -256,7 +242,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		radio1->setChecked(true);
 		//groupBox->setSizePolicy(toggleSizePolicy); //comment this so last one expands to fill remaining space
 		connect(radio1, &QRadioButton::toggled, [=](bool toggled) { if(toggled) {
-				lastFloatMode = ReprMode::Human;
+				lastReprMode = ReprMode::Human;
 				//calculator->setMode(Mode::Unsigned);
 				for(const auto inp : inputs) {
 					inp.second->setFloatMode(ReprMode::Human);
@@ -264,7 +250,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		}});
 
 		connect(radio2, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
-				lastFloatMode = ReprMode::Machine;
+				lastReprMode = ReprMode::Machine;
 				//calculator->setMode(Mode::Signed);
 				for(const auto inp : inputs) {
 					inp.second->setFloatMode(ReprMode::Machine);

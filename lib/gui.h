@@ -84,7 +84,7 @@ private:
 	std::map<int, QAction*> settingsMenuBases;
 
 	Mode lastIntMode;
-	ReprMode lastFloatMode;
+	ReprMode lastReprMode;
 	QSettings settings;
 };
 
