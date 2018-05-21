@@ -31,10 +31,29 @@ The calculator is intended for programmers and therefore uses the standard libra
 It was borne out of the frustration of creating hex values (or ranges of values) to search for while reverse engineering a binary save file. While most calculators support multiple bases, you must navigate through menus to change the mode. This calculator supports editing of any base, and seeing the effect on the other bases in real time.
 
 ##### Dependencies
-* Qt 5.5.1
+* Qt 5.10.1
 * A compiler that supports C++14 
 * ImageMagick 7.0+
 * Python 2.7
+
+##### How to install - Ubuntu
+* tar -xf babelcalc.tar
+
+##### How to run a release build
+* $ bin/babelcalc
+
+##### How to build
+* Clone Qt 5.10.1
+* $ cd {PATH_TO_QT}/Qt/5.10.1/Src
+* $ configure -static -no-openssl -no-opengl -no-qml-debug -no-shared -no-sql-sqlite -nomake examples -nomake tests -no-compile-examples -no-eglfs -optimize-size -opensource -confirm-license -release -skip qtwebview -prefix {PATH_TO_QT}/Qt/5.10.1/static-build-release/
+* $ make -j 4
+* $ make -j 4 install
+* Clone BabelCalc
+* $ mkdir babelcalc-build-static
+* $ cd babelcalc-build-static
+* $ export PATH={PATH_TO_QT}/Qt/5.10.1/static-build-release/bin:$PATH
+* $ qmake -config release ../BabelCalc/
+* $ make
 
 ##### Supported platforms
 * OSX 10.11+
