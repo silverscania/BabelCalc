@@ -58,6 +58,7 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 * $ export PATH={PATH_TO_QT}/Qt/5.11.0/static-build-debug/bin:$PATH
 * $ qmake -config debug ../BabelCalc/
 * $ make
+* $ make check # To run tests (optional)
 
 ##### Supported platforms
 * OSX 10.11+

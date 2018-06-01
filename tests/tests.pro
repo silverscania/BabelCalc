@@ -25,8 +25,4 @@ SOURCES += \ #tests/variablesizetest.cpp \
     testcalculator.cpp \
     testvariablesizes.cpp
 
-#Execute tests after linking
-unix:QMAKE_POST_LINK=./$$TARGET
-win32:QMAKE_POST_LINK=$${TARGET}.exe
-
 HEADERS +=
