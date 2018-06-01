@@ -30,11 +30,15 @@ The calculator is intended for programmers and therefore uses the standard libra
 
 It was borne out of the frustration of creating hex values (or ranges of values) to search for while reverse engineering a binary save file. While most calculators support multiple bases, you must navigate through menus to change the mode. This calculator supports editing of any base, and seeing the effect on the other bases in real time.
 
-##### Dependencies
+##### Ubuntu Build Dependencies
 * Qt 5.10.1
 * A compiler that supports C++14 
 * ImageMagick 7.0+
 * Python 2.7
+* apt install libfontconfig1-dev libfreetype6-dev fontconfig
+
+##### Ubuntu Runtime Dependencies
+* None
 
 ##### How to install - Ubuntu
 * tar -xf babelcalc.tar
@@ -43,22 +47,22 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 * $ bin/babelcalc
 
 ##### How to build
-* Clone Qt 5.10.1
-* $ cd {PATH_TO_QT}/Qt/5.10.1/Src
-* $ configure -static -no-openssl -no-opengl -no-qml-debug -no-shared -no-sql-sqlite -nomake examples -nomake tests -no-compile-examples -no-eglfs -optimize-size -opensource -confirm-license -release -skip qtwebview -prefix {PATH_TO_QT}/Qt/5.10.1/static-build-release/
+* Download Qt 5.11.0 source
+* $ cd {PATH_TO_QT}/Qt/5.11.0/Src
+* $ ./configure -static -system-freetype -fontconfig -debug -prefix {PATH_TO_QT}/Qt/5.11.0/static-build-debug/
 * $ make -j 4
 * $ make -j 4 install
-* Clone BabelCalc
+* Clone BabelCalc repo
 * $ mkdir babelcalc-build-static
 * $ cd babelcalc-build-static
-* $ export PATH={PATH_TO_QT}/Qt/5.10.1/static-build-release/bin:$PATH
-* $ qmake -config release ../BabelCalc/
+* $ export PATH={PATH_TO_QT}/Qt/5.11.0/static-build-debug/bin:$PATH
+* $ qmake -config debug ../BabelCalc/
 * $ make
 
 ##### Supported platforms
 * OSX 10.11+
 * Windows 8+
-* Linux (Ubuntu) (TODO)
+* Linux (Ubuntu 16.04)
 
 ##### License
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.

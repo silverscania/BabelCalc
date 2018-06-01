@@ -9,6 +9,7 @@ CONFIG   += testcase
 
 #Link with the babelcalc library
 LIBS += ../lib/liblib.a
+PRE_TARGETDEPS = ../lib/liblib.a #Force tests to rebuild when lib proj changes
 
 INCLUDEPATH += \
     ../lib \

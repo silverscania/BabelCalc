@@ -5,6 +5,7 @@ INCLUDEPATH += ../lib
 SOURCES += main.cpp
 
 LIBS += ../lib/liblib.a
+PRE_TARGETDEPS = ../lib/liblib.a #Force app to rebuild when lib proj changes
 
 QMAKE_EXTRA_TARGETS += iconTarget
 
