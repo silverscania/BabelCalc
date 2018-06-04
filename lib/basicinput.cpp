@@ -28,6 +28,7 @@ BasicInput::BasicInput(int base, Mode mode, const QString& labelText, const QStr
 	updateValidator();
 	updateLabelText();
 
+	// Settings fonts in style sheets doesn't seem to work with static builds
 	QFont font;
 	font.setFamily("Source Code Pro No Dot");
 	font.setLetterSpacing(QFont::AbsoluteSpacing, -2);
@@ -40,8 +41,11 @@ BasicInput::BasicInput(int base, Mode mode, const QString& labelText, const QStr
 	connect(lineEdit, &NarrowLineEdit::textEdited, this, &BasicInput::digitEdit);
 	connect(lineEdit, &NarrowLineEdit::focussed, this, &BasicInput::lineEditFocus);
 
+	QFont labelFont;
+	labelFont.setFamily("Source Code Pro No Dot Light");
 	label->setAlignment(Qt::AlignRight | Qt::AlignBottom);
 	label->setObjectName("baseLabel");
+	label->setFont(labelFont);
 
 	setLayout(new QHBoxLayout);
 

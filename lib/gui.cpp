@@ -69,6 +69,8 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 	QFontDatabase::addApplicationFont ( ":/font/Source Code Pro No Dot ExtraLight.ttf" );
 	QFontDatabase::addApplicationFont ( ":/font/Source Code Pro No Dot Light.ttf" );
+	QFontDatabase::addApplicationFont ( ":/font/SourceCodePro-Regular.ttf" );
+	QFontDatabase::addApplicationFont ( ":/font/Dosis-Medium.ttf" );
 
 	auto cutAct = new QAction(tr("&History Window"), nullptr);
 	cutAct->setCheckable(true);
@@ -317,7 +319,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		gridLayout->addWidget(createButton<SinhOperator>			(tr("sinh")), row, col++);
 		gridLayout->addWidget(createButton<CoshOperator>			(tr("cosh")), row, col++);
 		gridLayout->addWidget(createButton<TanhOperator>			(tr("tanh")), row, col++);
-		gridLayout->addWidget(createButton<LogNOperator>			(tr("log\u2099x")), row, col++);
+		gridLayout->addWidget(createButton<LogNOperator>			(tr("logₙx")), row, col++);
 		gridLayout->addWidget(createButton<ASinhOperator>			(tr("sinh⁻¹")), row++, col++);
 
 		col = 5;

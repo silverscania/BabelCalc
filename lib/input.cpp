@@ -30,14 +30,15 @@ Input::Input(int base, Mode mode, const QString& labelText, bool stripLeadingZer
 	label(new QLabel()),
 	mode(mode)
 {
-	QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect();
-	lineEdit->setGraphicsEffect(effect);
-	effect->setOpacity(1);
-	blinkAnim = new QPropertyAnimation(effect,"opacity");
-	blinkAnim->setDuration(300);
-	blinkAnim->setStartValue(0);
-	blinkAnim->setEndValue(1);
-	blinkAnim->setEasingCurve(QEasingCurve::OutQuad);
+	// TODO: animation not working on static builds
+//	QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect();
+//	lineEdit->setGraphicsEffect(effect);
+//	effect->setOpacity(1);
+//	blinkAnim = new QPropertyAnimation(effect,"opacity");
+//	blinkAnim->setDuration(300);
+//	blinkAnim->setStartValue(0);
+//	blinkAnim->setEndValue(1);
+//	blinkAnim->setEasingCurve(QEasingCurve::OutQuad);
 }
 
 void Input::displayValueChanged(const Value &value, bool userInput)

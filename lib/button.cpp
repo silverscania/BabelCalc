@@ -25,4 +25,8 @@ Button::Button(const QString &text, QWidget *parent)
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 	setText(text);
+
+	QFont labelFont;
+	labelFont.setFamily("Dosis");
+	setFont(labelFont);
 }
