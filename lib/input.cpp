@@ -30,15 +30,17 @@ Input::Input(int base, Mode mode, const QString& labelText, bool stripLeadingZer
 	label(new QLabel()),
 	mode(mode)
 {
-	// TODO: animation not working on static builds
-//	QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect();
-//	lineEdit->setGraphicsEffect(effect);
-//	effect->setOpacity(1);
-//	blinkAnim = new QPropertyAnimation(effect,"opacity");
-//	blinkAnim->setDuration(300);
-//	blinkAnim->setStartValue(0);
-//	blinkAnim->setEndValue(1);
-//	blinkAnim->setEasingCurve(QEasingCurve::OutQuad);
+	// For some reason on a static build, setting opacity to 1 makes the input fields invisible...
+	// Use 0.99 instead :(
+	QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect();
+	effect->setOpacity(0.99);
+	lineEdit->setGraphicsEffect(effect);
+
+	blinkAnim = new QPropertyAnimation(effect,"opacity");
+	blinkAnim->setDuration(300);
+	blinkAnim->setStartValue(0);
+	blinkAnim->setEndValue(0.99); // See comment above
+	blinkAnim->setEasingCurve(QEasingCurve::OutQuad);
 }
 
 void Input::displayValueChanged(const Value &value, bool userInput)
