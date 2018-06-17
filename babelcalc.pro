@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 SUBDIRS += lib tests app
+VERSION = 0.1
 
 tests.depends = lib
 app.depends = lib
@@ -22,6 +23,6 @@ unix:installer.commands = \
                    $${PWD}/resources/font/*.txt \
                    $${PWD}/icon/icon.svg makeself-tmp && \
                 $${PWD}/linux-release/makeself-release-2.4.0/makeself.sh makeself-tmp \
-                babelcalc-0.1.run "BabelCalc" \
+                babelcalc-$${VERSION}.run "BabelCalc" \
                 $${PWD}/linux-release/setup.sh
 QMAKE_EXTRA_TARGETS += installer

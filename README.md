@@ -3,8 +3,13 @@ BabelCalc is a cross-platform calculator for developers that operates on multipl
 
 Built using C++14 and Qt
 
-![Video of basic usage]
-(https://i.imgur.com/btjTHDt.gif)
+![Video of basic usage](https://i.imgur.com/btjTHDt.gif)
+
+#### Download
+https://github.com/silverscania/BabelCalc/releases
+
+#### How to install - Ubuntu
+* ./babelcalc-<version>.run
 
 #### Features
 The following features are an improvement, or are missing from other calculators that are available:
@@ -30,6 +35,13 @@ The calculator is intended for programmers and therefore uses the standard libra
 
 It was borne out of the frustration of creating hex values (or ranges of values) to search for while reverse engineering a binary save file. While most calculators support multiple bases, you must navigate through menus to change the mode. This calculator supports editing of any base, and seeing the effect on the other bases in real time.
 
+##### Supported platforms
+* OSX 10.11+
+* Windows 8+
+* Linux (Ubuntu 16.04)
+
+### Development
+
 ##### Ubuntu Build Dependencies
 * Qt 5.10.1
 * A compiler that supports C++14 
@@ -39,9 +51,6 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 
 ##### Ubuntu Runtime Dependencies
 * None
-
-##### How to install - Ubuntu
-* ./babelcalc-<version>.run
 
 ##### How to run a release build
 * $ bin/babelcalc
@@ -61,10 +70,8 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 * $ make check # To run tests (optional)
 * $ make installer # To make the Ubuntu installer (optional)
 
-##### Supported platforms
-* OSX 10.11+
-* Windows 8+
-* Linux (Ubuntu 16.04)
+##### Qt Note
+This program is open source, but statically links with Qt, which is LGPL licenced. To rebuild BabelCalc with a different version of Qt, you can get the source from here: https://github.com/silverscania/BabelCalc
 
 ##### License
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
