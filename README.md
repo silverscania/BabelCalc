@@ -41,7 +41,7 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 * None
 
 ##### How to install - Ubuntu
-* tar -xf babelcalc.tar
+* ./babelcalc-<version>.run
 
 ##### How to run a release build
 * $ bin/babelcalc
@@ -59,6 +59,7 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 * $ qmake -config debug ../BabelCalc/
 * $ make
 * $ make check # To run tests (optional)
+* $ make installer # To make the Ubuntu installer (optional)
 
 ##### Supported platforms
 * OSX 10.11+
