@@ -535,7 +535,7 @@ void GUI::openCustomBaseDialog()
 {
 	bool ok = false;
 	int base = QInputDialog::getInt(this, tr("Add a new input base"),
-									tr("Base [2 - 26]:"), 2, 2, 26, 1, &ok);
+									tr("Base [2 - 36]:"), 2, 2, 36, 1, &ok);
 	if (ok && !findInputForBase(base)) {
 
 		addNewInputBase(new BasicInput(base, lastIntMode, inputBaseToString(base)), true, true);

@@ -21,8 +21,9 @@ unix:installer.commands = \
                    $${PWD}/README.md \
                    $${PWD}/LICENSE \
                    $${PWD}/resources/font/*.txt \
-                   $${PWD}/icon/icon.svg makeself-tmp && \
+                   $${PWD}/icon/icon.svg \
+                   $${PWD}/linux-release/setup.sh makeself-tmp && \
                 $${PWD}/linux-release/makeself-release-2.4.0/makeself.sh makeself-tmp \
-                babelcalc-$${VERSION}.run "BabelCalc" \
-                $${PWD}/linux-release/setup.sh
+                babelcalc-$${VERSION}.run BabelCalc \
+                ./setup.sh
 QMAKE_EXTRA_TARGETS += installer

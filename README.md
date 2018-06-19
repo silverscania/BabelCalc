@@ -13,7 +13,7 @@ https://github.com/silverscania/BabelCalc/releases
 
 #### Features
 The following features are an improvement, or are missing from other calculators that are available:
-* Input, display and calculation of arbritary bases from 2 to 26
+* Input, display and calculation of arbritary bases from 2 to 36
 * Display as many different number bases as you want simultaneously
 * Edit numbers in place (no need to type it out again if you make a mistake)
 * Modulus operator (%)
