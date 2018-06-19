@@ -2,7 +2,7 @@ TEMPLATE = subdirs
 
 CONFIG += ordered
 SUBDIRS += lib tests app
-VERSION = 0.1
+VERSION = 0.2
 
 tests.depends = lib
 app.depends = lib
