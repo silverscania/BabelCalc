@@ -39,6 +39,7 @@ struct Operator {
 	inline virtual std::string getOperatorString() { return "x"; }
 
 	AngleMode angleMode {AngleMode::Degrees};
+	BitWidth BitWidth {BitWidth::SixtyFour};
 	const int precedence;
 };
 
@@ -55,24 +56,24 @@ struct BinaryOperator : public Operator {
 #define BINARY_OPERATOR(Type, Op, Precedence) struct Type : public BinaryOperator { \
 	inline Type() : BinaryOperator(Precedence) {} \
 	inline Value evaluate(const Value &lhs, const Value &rhs) const override { \
-		return Value(lhs.intVal Op rhs.intVal, lhs.floatVal Op rhs.floatVal, lhs.uIntVal Op rhs.uIntVal); \
+		return Value(lhs.intVal Op rhs.intVal, lhs.doubleVal Op rhs.doubleVal, lhs.uIntVal Op rhs.uIntVal, lhs.floatVal Op rhs.floatVal); \
 	} \
 	inline std::string getOperatorString() override { return #Op; } \
 };
 
 #define UNARY_OPERATOR(Type, Op) struct Type : public UnaryOperator { \
 	inline Value evaluate(const Value &rhs) const override { \
-		return Value(static_cast<CalcInt>(Op(rhs.intVal)), static_cast<CalcFloat>(Op(rhs.floatVal)), static_cast<CalcUInt>(Op(rhs.uIntVal))); \
+		return Value(static_cast<CalcInt>(Op(rhs.intVal)), static_cast<CalcDouble>(Op(rhs.doubleVal)), static_cast<CalcUInt>(Op(rhs.uIntVal)), static_cast<CalcFloat>(Op(rhs.floatVal)), ); \
 	} \
 };
 
 #define UNARY_ANGLE_OPERATOR(Type, Op) struct Type : public UnaryOperator { \
 	inline Value evaluate(const Value &rhs) const override { \
-		constexpr CalcFloat mult = pi/180; \
+		constexpr CalcDouble mult = pi/180; \
 		if(angleMode == AngleMode::Degrees) \
-			return Value(static_cast<CalcInt>(Op(rhs.intVal*mult)), static_cast<CalcFloat>(Op(rhs.floatVal*mult)), static_cast<CalcUInt>(Op(rhs.uIntVal*mult))); \
+			return Value(static_cast<CalcInt>(Op(rhs.intVal*mult)), static_cast<CalcDouble>(Op(rhs.doubleVal*mult)), static_cast<CalcUInt>(Op(rhs.uIntVal*mult)), static_cast<CalcFloat>(Op(rhs.floatVal*mult))); \
 		else \
-			return Value(static_cast<CalcInt>(Op(rhs.intVal)), static_cast<CalcFloat>(Op(rhs.floatVal)), static_cast<CalcUInt>(Op(rhs.uIntVal))); \
+			return Value(static_cast<CalcInt>(Op(rhs.intVal)), static_cast<CalcDouble>(Op(rhs.doubleVal)), static_cast<CalcUInt>(Op(rhs.uIntVal)), static_cast<CalcFloat>(Op(rhs.floatVal))); \
 	} \
 };
 
@@ -82,8 +83,8 @@ struct BinaryOperator : public Operator {
 	inline Value evaluate(const Value &lhs, const Value &rhs) const override { \
 		const CalcInt intVal = PostOp (lhs.intVal Op rhs.intVal); \
 		const CalcUInt uIntVal = PostOp (lhs.uIntVal Op rhs.uIntVal); \
-		const CalcUInt fVal = PostOp (*reinterpret_cast<const CalcUInt*>(&lhs.floatVal) Op *reinterpret_cast<const CalcUInt*>(&rhs.floatVal)); \
-		return Value(intVal, *reinterpret_cast<const CalcFloat*>(&fVal), uIntVal); \
+		const CalcUInt fVal = PostOp (*reinterpret_cast<const CalcUInt*>(&lhs.doubleVal) Op *reinterpret_cast<const CalcUInt*>(&rhs.doubleVal)); \
+		return Value(intVal, *reinterpret_cast<const CalcDouble*>(&fVal), uIntVal); \
 	} \
 };
 
@@ -91,8 +92,8 @@ struct BinaryOperator : public Operator {
 	inline Value evaluate(const Value &rhs) const override { \
 		const CalcInt intVal = Op rhs.intVal PostOp; \
 		const CalcUInt uIntVal = Op rhs.uIntVal PostOp; \
-		const CalcUInt fVal = Op *reinterpret_cast<const CalcUInt*>(&rhs.floatVal); \
-		return Value(intVal, *reinterpret_cast<const CalcFloat*>(&fVal), uIntVal); \
+		const CalcUInt fVal = Op *reinterpret_cast<const CalcUInt*>(&rhs.doubleVal); \
+		return Value(intVal, *reinterpret_cast<const CalcDouble*>(&fVal), uIntVal); \
 	} \
 };
 
@@ -137,21 +138,20 @@ BITWISE_UNARY_OPERATOR(ShiftRightOperator,	 , >>1)
 ///Custom unary operators
 struct TenPowOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
-		return Value(static_cast<CalcInt>(std::pow(10, rhs.intVal)),	std::pow(10, rhs.floatVal), static_cast<CalcUInt>(std::pow(10, rhs.uIntVal)));
+		return Value(static_cast<CalcInt>(std::pow(10, rhs.intVal)),	std::pow(10, rhs.doubleVal), static_cast<CalcUInt>(std::pow(10, rhs.uIntVal)));
 	}
 };
 
 struct RotateLeftOperator : public UnaryOperator {
 	inline CalcUInt rotate(CalcUInt value) const {
 		CalcUInt result = value << 1;
-		result |= (value >> 63) & 0x1;
-		return result;
+		return result | ((value >> ((int) bitWidth)) & 0x1);
 	}
 
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = rotate(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = rotate(rhs.uIntVal);
-		const CalcUInt fVal = rotate(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = rotate(*reinterpret_cast<const CalcUInt*>(&rhs.doubleVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}
@@ -167,7 +167,7 @@ struct RotateRightOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = rotate(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = rotate(rhs.uIntVal);
-		const CalcUInt fVal = rotate(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = rotate(*reinterpret_cast<const CalcUInt*>(&rhs.doubleVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}
@@ -184,7 +184,7 @@ struct FactorialOperator : public UnaryOperator {
 	}
 
 	inline Value evaluate(const Value &rhs) const override {
-		return Value(factorial(rhs.intVal),	factorial(rhs.floatVal), factorial(rhs.uIntVal));
+		return Value(factorial(rhs.intVal),	factorial(rhs.doubleVal), factorial(rhs.uIntVal));
 	}
 };
 
@@ -207,7 +207,7 @@ struct ByteReverseOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = reverse(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = reverse(rhs.uIntVal);
-		const CalcUInt fVal = reverse(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = reverse(*reinterpret_cast<const CalcUInt*>(&rhs.doubleVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}
@@ -225,7 +225,7 @@ struct SwapHalvesOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = reverse(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = reverse(rhs.uIntVal);
-		const CalcUInt fVal = reverse(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = reverse(*reinterpret_cast<const CalcUInt*>(&rhs.doubleVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}
@@ -246,27 +246,27 @@ struct eOperator : public UnaryOperator {
 
 struct ePowXOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
-		return Value(static_cast<CalcInt>(std::pow(e, rhs.intVal)),	std::pow(e, rhs.floatVal), static_cast<CalcUInt>(std::pow(e, rhs.uIntVal)));
+		return Value(static_cast<CalcInt>(std::pow(e, rhs.intVal)),	std::pow(e, rhs.doubleVal), static_cast<CalcUInt>(std::pow(e, rhs.uIntVal)));
 	}
 };
 
 struct SquaredOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
-		return Value(static_cast<CalcInt>(std::pow(rhs.intVal, 2)),	std::pow(rhs.floatVal, 2), static_cast<CalcUInt>(std::pow(rhs.uIntVal, 2)));
+		return Value(static_cast<CalcInt>(std::pow(rhs.intVal, 2)),	std::pow(rhs.doubleVal, 2), static_cast<CalcUInt>(std::pow(rhs.uIntVal, 2)));
 	}
 };
 
 ///Custom binary operators
 //struct ExponentialNotation : public BinaryOperator {
 //	inline Value evaluate(const Value& lhs, const Value& rhs) const override {
-//		return Value(static_cast<CalcInt>(lhs.intVal * std::pow(10, rhs.intVal)), lhs.floatVal * std::pow(10, rhs.floatVal), static_cast<CalcUInt>(lhs.uIntVal * std::pow(10, rhs.uIntVal)));
+//		return Value(static_cast<CalcInt>(lhs.intVal * std::pow(10, rhs.intVal)), lhs.doubleVal * std::pow(10, rhs.doubleVal), static_cast<CalcUInt>(lhs.uIntVal * std::pow(10, rhs.uIntVal)));
 //	}
 //};
 
 struct DivisionOperator : public BinaryOperator {
 	inline DivisionOperator() : BinaryOperator(1) {}
 	inline Value evaluate(const Value& lhs, const Value& rhs) const override {
-		CalcFloat fval = rhs.floatVal == 0.0f ? 0 : lhs.floatVal / rhs.floatVal;
+		CalcDouble fval = rhs.doubleVal == 0.0f ? 0 : lhs.doubleVal / rhs.doubleVal;
 		CalcInt ival = rhs.intVal == 0 ? 0 : lhs.intVal / rhs.intVal;
 		CalcUInt uival = rhs.uIntVal == 0 ? 0 : lhs.uIntVal / rhs.uIntVal;
 
@@ -277,7 +277,7 @@ struct DivisionOperator : public BinaryOperator {
 struct ModulusOperator : public BinaryOperator {
 	inline ModulusOperator() : BinaryOperator(0) {}
 	inline Value evaluate(const Value& lhs, const Value& rhs) const override {
-		CalcFloat fval = rhs.floatVal == 0.0f ? 0 : std::fmod(lhs.floatVal, rhs.floatVal);
+		CalcDouble fval = rhs.doubleVal == 0.0f ? 0 : std::fmod(lhs.doubleVal, rhs.doubleVal);
 		CalcInt ival = rhs.intVal == 0 ? 0 : lhs.intVal % rhs.intVal;
 		CalcUInt uival = rhs.uIntVal == 0 ? 0 : lhs.uIntVal % rhs.uIntVal;
 
@@ -288,21 +288,21 @@ struct ModulusOperator : public BinaryOperator {
 struct NRootOperator : public BinaryOperator {
 	inline NRootOperator() : BinaryOperator(0) {}
 	inline Value evaluate(const Value& lhs, const Value &rhs) const override {
-		return Value(static_cast<CalcInt>(std::pow(lhs.intVal, 1.0/rhs.intVal)),	std::pow(lhs.floatVal, 1.0/rhs.floatVal), static_cast<CalcUInt>(std::pow(lhs.uIntVal, 1.0/rhs.uIntVal)));
+		return Value(static_cast<CalcInt>(std::pow(lhs.intVal, 1.0/rhs.intVal)),	std::pow(lhs.doubleVal, 1.0/rhs.doubleVal), static_cast<CalcUInt>(std::pow(lhs.uIntVal, 1.0/rhs.uIntVal)));
 	}
 };
 
 struct LogNOperator : public BinaryOperator {
 	inline LogNOperator() : BinaryOperator(0) {}
 	inline Value evaluate(const Value& lhs, const Value &rhs) const override {
-		return Value(static_cast<CalcInt>(std::log(lhs.intVal)/std::log(rhs.intVal)), std::log(lhs.floatVal)/std::log(rhs.floatVal), static_cast<CalcUInt>(std::log(lhs.uIntVal)/std::log(rhs.uIntVal)));
+		return Value(static_cast<CalcInt>(std::log(lhs.intVal)/std::log(rhs.intVal)), std::log(lhs.doubleVal)/std::log(rhs.doubleVal), static_cast<CalcUInt>(std::log(lhs.uIntVal)/std::log(rhs.uIntVal)));
 	}
 };
 
 struct PowerOperator : public BinaryOperator {
 	inline PowerOperator() : BinaryOperator(0) {}
 	inline Value evaluate(const Value& lhs, const Value &rhs) const override {
-		return Value(static_cast<CalcInt>(std::pow(lhs.intVal, rhs.intVal)), std::pow(lhs.floatVal, rhs.floatVal), static_cast<CalcUInt>(std::pow(lhs.uIntVal, rhs.uIntVal)));
+		return Value(static_cast<CalcInt>(std::pow(lhs.intVal, rhs.intVal)), std::pow(lhs.doubleVal, rhs.doubleVal), static_cast<CalcUInt>(std::pow(lhs.uIntVal, rhs.uIntVal)));
 	}
 };
 

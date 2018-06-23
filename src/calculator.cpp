@@ -113,15 +113,15 @@ void Calculator::inputRandomNumber()
 {
 	Value RHS;
 	if(mode == Mode::Float) {
-		std::uniform_real_distribution<CalcFloat> distribution;
-		RHS.floatVal = distribution(randgen);
-		RHS.intVal = static_cast<CalcInt>(RHS.floatVal);
+		std::uniform_real_distribution<CalcDouble> distribution;
+		RHS.doubleVal = distribution(randgen);
+		RHS.intVal = static_cast<CalcInt>(RHS.doubleVal);
 		RHS.uIntVal = static_cast<CalcUInt>(RHS.intVal);
 	}
 	else {
 		std::uniform_int_distribution<CalcInt> distribution;
 		RHS.intVal = distribution(randgen);
-		RHS.floatVal = static_cast<CalcFloat>(RHS.intVal);
+		RHS.doubleVal = static_cast<CalcDouble>(RHS.intVal);
 		RHS.uIntVal = static_cast<CalcUInt>(RHS.intVal);
 	}
 
@@ -292,7 +292,7 @@ std::ostream & operator<<(std::ostream &os, const CalcStackItem &x)
 		os << " " << x.operater->getOperatorString() << " ";
 	}
 	else if(x.type == CalcStackType::Value) {
-		os << x.val.floatVal;
+		os << x.val.doubleVal;
 	}
 
 	return os;

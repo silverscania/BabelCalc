@@ -62,10 +62,10 @@ void Input::displayValueChanged(const Value &value, bool userInput)
 	}
 	else { //mode Float
 		if(base == 10) {
-			lineEdit->setText(prefix + QString::number(value.floatVal, 'G', GUI::DECIMAL_DISP_LEN));
+			lineEdit->setText(prefix + QString::number(value.doubleVal, 'G', GUI::DECIMAL_DISP_LEN));
 		}
 		else {
-			auto nosign = reinterpret_cast<const CalcUInt*>(&(value.floatVal));
+			auto nosign = reinterpret_cast<const CalcUInt*>(&(value.doubleVal));
 			lineEdit->setText(prefix + QString::number(*nosign, base));
 		}
 	}

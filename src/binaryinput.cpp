@@ -85,7 +85,7 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 		binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
 	}
 	else {
-		auto nosign = reinterpret_cast<const CalcUInt*>(&value.floatVal);
+		auto nosign = reinterpret_cast<const CalcUInt*>(&value.doubleVal);
 		binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
 	}
 
