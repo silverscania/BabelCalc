@@ -20,7 +20,7 @@
 
 QPushButton {
     border: none;
-    font-family: "Dosis";
+ /*   font-family: "Dosis"; */
     font-weight: 500;
     font-size: 16px;
     color: white;
@@ -97,9 +97,9 @@ QLabel {
     font-size: 14px;
 }
 QLabel#baseLabel {
-    font-family: "Source Code Pro No Dot Light";
-    color: #eee;
-    font-size: 10px;
+    /* font-family: "Source Code Pro No Dot Light"; */
+    color: #fff;
+    font-size: 12px;
     margin-bottom: 6px;
 }
 #ToggleButtonRow {

@@ -28,6 +28,7 @@ BasicInput::BasicInput(int base, Mode mode, const QString& labelText, const QStr
 	updateValidator();
 	updateLabelText();
 
+	// Settings fonts in style sheets doesn't seem to work with static builds
 	QFont font;
 	font.setFamily("Source Code Pro No Dot");
 	font.setLetterSpacing(QFont::AbsoluteSpacing, -2);
@@ -40,8 +41,11 @@ BasicInput::BasicInput(int base, Mode mode, const QString& labelText, const QStr
 	connect(lineEdit, &NarrowLineEdit::textEdited, this, &BasicInput::digitEdit);
 	connect(lineEdit, &NarrowLineEdit::focussed, this, &BasicInput::lineEditFocus);
 
+	QFont labelFont;
+	labelFont.setFamily("Source Code Pro No Dot Light");
 	label->setAlignment(Qt::AlignRight | Qt::AlignBottom);
 	label->setObjectName("baseLabel");
+	label->setFont(labelFont);
 
 	setLayout(new QHBoxLayout);
 
@@ -58,7 +62,9 @@ BasicInput::BasicInput(int base, Mode mode, const QString& labelText, const QStr
 void BasicInput::updateValidator()
 {
 	constexpr char nums[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-	constexpr char lowerAlph[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'}; //todo more
+	constexpr char lowerAlph[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+								  'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+								  'w', 'x', 'y', 'z'};
 	//constexpr char upperAlph[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'}; //todo more
 
 	//set line len. Base 10 supports e notation and floating point so don't do a hard limit.

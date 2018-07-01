@@ -9,7 +9,7 @@ CONFIG   += testcase
 
 #Link with the babelcalc library
 LIBS += ../lib/liblib.a
-PRE_TARGETDEPS = ../lib/liblib.a
+PRE_TARGETDEPS = ../lib/liblib.a #Force tests to rebuild when lib proj changes
 
 INCLUDEPATH += \
     ../lib \
@@ -24,9 +24,5 @@ SOURCES += \ #tests/variablesizetest.cpp \
     main.cpp \
     testcalculator.cpp \
     testvariablesizes.cpp
-
-#Execute tests after linking
-unix:QMAKE_POST_LINK=./$$TARGET
-win32:QMAKE_POST_LINK=$${TARGET}.exe
 
 HEADERS +=

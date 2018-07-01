@@ -7,9 +7,12 @@ SOURCES += main.cpp
 #Use libs and pre_targetdeps. pre_targetdeps indicates that we're linking
 #with a statis library and this project should be rebuild every time liblib changes.
 LIBS += ../lib/liblib.a
-PRE_TARGETDEPS = ../lib/liblib.a
+PRE_TARGETDEPS = ../lib/liblib.a #Force app to rebuild when lib proj changes
 
 QMAKE_EXTRA_TARGETS += iconTarget
+
+# Change name of output binary
+TARGET = babelcalc
 
 # install
 target.path = /Applications/BabelCalc

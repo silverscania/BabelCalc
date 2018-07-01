@@ -30,13 +30,16 @@ Input::Input(int base, Mode mode, const QString& labelText, bool stripLeadingZer
 	label(new QLabel()),
 	mode(mode)
 {
+	// For some reason on a static build, setting opacity to 1 makes the input fields invisible...
+	// Use 0.99 instead :(
 	QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect();
+	effect->setOpacity(0.99);
 	lineEdit->setGraphicsEffect(effect);
-	effect->setOpacity(1);
+
 	blinkAnim = new QPropertyAnimation(effect,"opacity");
 	blinkAnim->setDuration(300);
 	blinkAnim->setStartValue(0);
-	blinkAnim->setEndValue(1);
+	blinkAnim->setEndValue(0.99); // See comment above
 	blinkAnim->setEasingCurve(QEasingCurve::OutQuad);
 }
 
