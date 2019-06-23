@@ -22,8 +22,8 @@
 #include <QLabel>
 #include <QGridLayout>
 
-BinaryInput::BinaryInput(Mode mode) :
-	Input(2, mode, "binary", false)
+BinaryInput::BinaryInput(Mode mode, ReprMode reprMode) :
+	Input(2, mode, reprMode, "binary", false)
 {
 	updateValidator();
 	updateLabelText();

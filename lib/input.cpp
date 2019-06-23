@@ -22,20 +22,23 @@
 #include <QHBoxLayout>
 #include "gui.h"
 
-Input::Input(int base, Mode mode, const QString& labelText, bool stripLeadingZeros, const QString &prefix) :
+Input::Input(int base, Mode mode, ReprMode reprMode, const QString& labelText, bool stripLeadingZeros, const QString &prefix) :
 	base(base),
 	prefix(prefix),
 	labelText(labelText),
 	lineEdit(new NarrowLineEdit(prefix, stripLeadingZeros)),
 	label(new QLabel()),
-	mode(mode)
+	mode(mode),
+	reprMode(reprMode)
 {
+
 	// For some reason on a static build, setting opacity to 1 makes the input fields invisible...
 	// Use 0.99 instead :(
 	QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect();
 	effect->setOpacity(0.99);
 	lineEdit->setGraphicsEffect(effect);
 
+//QTextEdit::setCursorWidth()
 	blinkAnim = new QPropertyAnimation(effect,"opacity");
 	blinkAnim->setDuration(300);
 	blinkAnim->setStartValue(0);
@@ -52,26 +55,89 @@ void Input::displayValueChanged(const Value &value, bool userInput)
 		return;
 	}
 
-	if(mode == Mode::Signed) {
-		const QString sign = value.intVal < 0 ? "-" : "";
-		lineEdit->setText(sign + prefix + QString::number(std::abs(value.intVal), base));
+	switch (reprMode) {
+		case ReprMode::Human:
+			setDisplayValueHuman(value);
+			break;
+		case ReprMode::Machine:
+			setDisplayValueMachine(value);
+			break;
 	}
-	else if(mode == Mode::Unsigned) {
-		lineEdit->setText(prefix + QString::number(value.uIntVal, base));
-	}
-	else if(mode == Mode::TwosComp) {
-		auto nosign = reinterpret_cast<const CalcUInt*>(&(value.intVal));
-		lineEdit->setText(prefix + QString::number(*nosign, base));
-	}
-	else { //mode Float
-		if(base == 10) {
-			lineEdit->setText(prefix + QString::number(value.floatVal, 'G', GUI::DECIMAL_DISP_LEN));
+}
+
+/**
+ * Signed values are displayed with the +- signs.
+ * Unsigned values are displayed as integers
+ * Float values are displayed as floating point in any base
+ */
+void Input::setDisplayValueHuman(const Value& value) {
+	switch (mode) {
+		case Mode::Signed: {
+			// Work out our own - sign so we can put the prefix inbetween the - sign and the number.
+			const QString sign = value.intVal < 0 ? "-" : "";
+			lineEdit->setText(sign + prefix + QString::number(std::abs(value.intVal), base));
+			break;
 		}
-		else {
-			auto nosign = reinterpret_cast<const CalcUInt*>(&(value.floatVal));
-			lineEdit->setText(prefix + QString::number(*nosign, base));
-		}
+		case Mode::Unsigned:
+			lineEdit->setText(prefix + QString::number(value.uIntVal, base));
+			break;
+
+		case Mode::Float:
+			lineEdit->setText(floatToString(value.floatVal, base, prefix));
+			break;
 	}
+}
+
+/**
+ * Signed values are displayed as twos complement
+ * Unsigned values are displayed raw
+ * Floating point values are displayed in IEE-745 in all bases
+ */
+void Input::setDisplayValueMachine(const Value& value) {
+	switch (mode) {
+		case Mode::Signed:
+			lineEdit->setText(prefix + QString::number(Value::intToRaw(value.intVal), base));
+			break;
+
+		case Mode::Unsigned:
+			lineEdit->setText(prefix + QString::number(value.uIntVal, base));
+			break;
+
+		case Mode::Float:
+			lineEdit->setText(prefix + QString::number(Value::floatToRaw(value.floatVal), base));
+			break;
+	}
+}
+
+CalcFloat Input::stringToFloat(const QString& string, int base)
+{
+	return 0.0f;
+}
+
+QString Input::floatToString(CalcFloat value, int base, const QString& prefix)
+{
+	const int MAX_DECIMALS = 6;
+	const int MIN_DECIMALS = 1;
+	// Take sign, and then make it +ve for the rest of the function
+	const QString sign = value < 0 ? "-" : "";
+	value = fabs(value);
+
+	// Start with integer part and "."
+	QString string = QString::number((CalcUInt) floor(value), base) + ".";
+
+	// Stop once MAX_DIGITS is reached, or the exact value was represented
+	// TODO: support e notation
+	for(int i = 0; i < MIN_DECIMALS ||
+		(i < MAX_DECIMALS && stringToFloat(sign + string, base) == value); ++i)
+	{
+		CalcFloat fractionAsInteger = floor(value * pow((double) base, i));
+		QString fractionDigit = QString::number((CalcInt)floor(fractionAsInteger), base);
+
+		// Take the last character. Anything higher is from previous digits
+		string += fractionDigit.right(1);
+	}
+
+	return sign + prefix + string;
 }
 
 void Input::setNextInputClears(bool inputClears)
@@ -87,33 +153,60 @@ void Input::digitEdit(const QString&)
 	const QString inputText {lineEdit->getStrippedInput()};
 	Value RHS;
 
-	bool conversionOk = false;
-	if(mode == Mode::Signed) {
-		CalcInt val {inputText.toLongLong(&conversionOk, base)};
-		RHS = Value(val, static_cast<CalcFloat>(val), static_cast<CalcUInt>(val));
-	}
-	else if (mode == Mode::Unsigned) {
-		CalcUInt val {inputText.toULongLong(&conversionOk, base)};
-		RHS = Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
-	}
-	else if(mode == Mode::TwosComp){ //twos comp
-		CalcUInt unsignedVal {inputText.toULongLong(&conversionOk, base)};
-		CalcInt val = Value::rawToInt(unsignedVal);
-		RHS = Value(val, static_cast<CalcFloat>(val), unsignedVal);
-	}
-	else if(mode == Mode::Float) {
-		if(base == 10) {
-			CalcFloat val = inputText.toDouble();
-			RHS = Value(static_cast<CalcInt>(val), val, static_cast<CalcUInt>(val));
-		}
-		else {
-			CalcUInt unsignedVal = inputText.toULongLong(&conversionOk, base);
-			CalcFloat val = Value::rawToFloat(unsignedVal);
-			RHS = Value(static_cast<CalcInt>(val), val, static_cast<CalcUInt>(val)); //todo what to do here with float to int overflows?
-		}
-	}
+	switch (reprMode) {
+		case ReprMode::Human:
+			emit inputChanged(humanInputToValue(inputText), base, mode);
+			break;
 
-	emit inputChanged(RHS, base, mode);
+		case ReprMode::Machine:
+			emit inputChanged(machineInputToValue(inputText), base, mode);
+			break;
+	}
+}
+
+/**
+ * Convert text entered by user in human mode to a value. Prefix
+ * should already have been stripped before calling this.
+ */
+Value Input::humanInputToValue(const QString& inputText)
+{
+	bool conversionOk = false;
+	switch(mode) {
+		case Mode::Signed: {
+			CalcInt val {inputText.toLongLong(&conversionOk, base)};
+			return Value(val, static_cast<CalcFloat>(val), static_cast<CalcUInt>(val));
+		}
+		case Mode::Unsigned: {
+			CalcUInt val {inputText.toULongLong(&conversionOk, base)};
+			return Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
+		}
+		case Mode::Float: {
+			CalcFloat val {stringToFloat(inputText, base)};
+			return Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
+		}
+	}
+}
+
+Value Input::machineInputToValue(const QString& inputText)
+{
+	// All inputs take raw value in machine mode
+	bool conversionOk = false;
+	const CalcUInt unsignedVal {inputText.toULongLong(&conversionOk, base)};
+
+	switch(mode) {
+		case Mode::Signed: {
+			CalcInt val = Value::rawToInt(unsignedVal);
+			return Value(val, static_cast<CalcFloat>(val), unsignedVal);
+		}
+		case Mode::Unsigned: {
+			return Value(static_cast<CalcInt>(unsignedVal), static_cast<CalcFloat>(unsignedVal), unsignedVal);
+		}
+		case Mode::Float: {
+			CalcFloat val = Value::rawToFloat(unsignedVal);
+			// TODO: should all these be cast? Or raw converted?
+			return Value(static_cast<CalcInt>(val), val, static_cast<CalcUInt>(val)); //todo what to do here with float to int overflows?
+		}
+	}
 }
 
 void Input::lineEditFocus(bool)
@@ -131,30 +224,30 @@ void Input::updateValidator()
 
 void Input::updateLabelText()
 {
-	QString signModeName;
+	QString modeName;
 
 	switch (mode) {
 		case Mode::Float:
-			if(reprMode == ReprMode::Human) {
-				signModeName = tr("float - human");
-			}
-			else {
-				signModeName = tr("float - machine");
-			}
+			modeName = tr("float");
 			break;
 		case Mode::Signed:
-			signModeName = tr("signed");
+			modeName = tr("signed");
 			break;
 		case Mode::Unsigned:
-			signModeName = tr("unsigned");
-			break;
-		default:
-		case Mode::TwosComp:
-			signModeName = tr("2's comp");
+			modeName = tr("unsigned");
 			break;
 	}
 
-	label->setText(signModeName + "\n" + labelText);
+	switch (reprMode) {
+		case ReprMode::Human:
+			modeName += " - human";
+			break;
+		case ReprMode::Machine:
+			modeName += " - machine";
+			break;
+	}
+
+	label->setText(modeName + "\n" + labelText);
 }
 
 void Input::blink()

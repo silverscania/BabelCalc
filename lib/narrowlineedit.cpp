@@ -21,6 +21,7 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QValidator>
+#include <QStyleOption>
 
 NarrowLineEdit::NarrowLineEdit(const QString& prefix, bool stripLeadingZeros) :
 	QLineEdit(prefix+"0"),
@@ -28,6 +29,14 @@ NarrowLineEdit::NarrowLineEdit(const QString& prefix, bool stripLeadingZeros) :
 	stripLeadingZeros(stripLeadingZeros)
 {
 	connect(this, &NarrowLineEdit::textChanged, [=]() { recalcSize();});
+	//QCursor cursor;//= cursor();
+	//cursor.setShape(Qt::CustomCursor);
+//	QCursor cursor(QBitmap(10, 100), QBitmap(10, 100));
+//	setCursor(cursor);
+//style()->pix
+//	set
+//	QStyleOption option;
+//	option.initFrom(this);
 }
 
 QSize NarrowLineEdit::getNarrowLineSize() const
@@ -175,5 +184,3 @@ void NarrowLineEdit::keyPressEvent(QKeyEvent *event)
 		}
 	}
 }
-
-

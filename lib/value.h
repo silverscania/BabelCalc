@@ -59,7 +59,7 @@ struct Value {
 		return ret;
 	}
 
-	inline static CalcUInt floatToRaw(CalcInt value) {
+	inline static CalcUInt intToRaw(CalcInt value) {
 		CalcUInt ret;
 		std::memcpy(&ret, &value, sizeof(CalcInt));
 		return ret;

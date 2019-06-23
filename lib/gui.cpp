@@ -25,14 +25,13 @@
 #include <QButtonGroup>
 #include "horizontalbuttongroup.h"
 #include "basicinput.h"
-#include "base10input.h"
 #include "binaryinput.h"
 #include "narrowlineedit.h"
 
 GUI::GUI(Calculator* calc, QWidget* parent)
 	: QMainWindow(parent),
 	  calculator(calc),
-	  lastIntMode(Mode::Signed),
+	  lastMode(Mode::Signed),
 	  lastReprMode(ReprMode::Human),
 	  settings("Bits Of Beards", "BabelCalc")
 {
@@ -45,10 +44,16 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	QString styleSheet = QLatin1String(baseStyle.readAll());
 
 	//Append windows style
-#ifndef Q_OS_MAC
+#ifdef Q_OS_WINDOWS
 	QFile winStyle(":/style/windowsstyle.qss");
 	winStyle.open(QFile::ReadOnly);
 	styleSheet += QLatin1String(winStyle.readAll());
+#elif defined(Q_OS_LINUX)
+	QFile winStyle(":/style/linuxstyle.qss");
+	winStyle.open(QFile::ReadOnly);
+	styleSheet += QLatin1String(winStyle.readAll());
+#elif defined(Q_OS_MAC)
+
 #endif
 
 	setStyleSheet(styleSheet);
@@ -109,10 +114,10 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		connect(clear, &QAction::triggered, this, &GUI::clearCustomBaseList);
 	}
 
-	addNewInputBase(new Base10Input(/*10,*/ Mode::Signed, inputBaseToString(10)), false, true);
-	addNewInputBase(new BasicInput(16, Mode::Signed, inputBaseToString(16), "0x"), false, true);
-	addNewInputBase(new BasicInput(8, Mode::Signed, inputBaseToString(8)), true, false);
-	addNewInputBase(new BinaryInput(Mode::Signed), false, true);
+	addNewInputBase(new BasicInput(10, Mode::Signed, ReprMode::Human, inputBaseToString(10)), false, true);
+	addNewInputBase(new BasicInput(16, Mode::Signed, ReprMode::Human, inputBaseToString(16), "0x"), false, true);
+	addNewInputBase(new BasicInput(8, Mode::Signed, ReprMode::Human, inputBaseToString(8)), true, false);
+	addNewInputBase(new BinaryInput(Mode::Signed, ReprMode::Machine), false, true);
 	//setInputBaseEnabled(8, false); //octal off by default
 
 	for(int base = 2; base <= 26; ++base) {
@@ -120,7 +125,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		if(settings.contains(baseName)) {
 			const bool enabled = settings.value(baseName, false).toBool();
 			if(findInputForBase(base) == nullptr) {
-				addNewInputBase(new BasicInput(base, Mode::Signed, inputBaseToString(base)), true, enabled);
+				addNewInputBase(new BasicInput(base, Mode::Signed, ReprMode::Human, inputBaseToString(base)), true, enabled);
 			}
 
 			setInputBaseEnabled(base, enabled);
@@ -137,39 +142,6 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 
 	QSizePolicy toggleSizePolicy(QSizePolicy::Policy::Maximum, QSizePolicy::Policy::Maximum);
-
-	//Int / float switch
-	{
-		HorizontalButtonGroup* groupBox = new HorizontalButtonGroup;
-
-		QPushButton *radio1 = new QPushButton(tr("int"));
-		QPushButton *radio2 = new QPushButton(tr("float"));
-		radio1->setSizePolicy(toggleSizePolicy);
-		radio2->setSizePolicy(toggleSizePolicy);
-		groupBox->addButton(radio1);
-		groupBox->addButton(radio2);
-		groupBox->layout()->setAlignment(radio2, Qt::AlignLeft);
-		radio1->setChecked(true);
-		groupBox->setSizePolicy(toggleSizePolicy);
-		connect(radio1, &QRadioButton::toggled, [=](bool toggled){if(toggled) {
-				calculator->setMode(lastIntMode);
-				for(const auto inp : inputs) {
-					if(inp.first == 10)
-						inp.second->setMode(Mode::Signed);
-					else
-						inp.second->setMode(lastIntMode);
-				}
-				intModeToggleGroup->setEnabled(true);
-				floatModeToggleGroup->setEnabled(false);
-			}});
-		connect(radio2, &QRadioButton::toggled, [=](bool toggled){if(toggled) {
-				calculator->setMode(Mode::Float);
-				for(const auto inp : inputs) inp.second->setMode(Mode::Float);
-				intModeToggleGroup->setEnabled(false);
-				floatModeToggleGroup->setEnabled(true);
-			}});
-		toggleButtonRow->layout()->addWidget(groupBox);
-	}
 
 	//32/64 bit toggle
 	{
@@ -193,15 +165,18 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		toggleButtonRow->layout()->addWidget(groupBox);
 	}
 
-	//signed unsigned
+	//signed unsigned float
 	{
 		intModeToggleGroup = new HorizontalButtonGroup();
-		QPushButton *radio1 = new QPushButton(tr("unsigned"));
-		QPushButton *radio2 = new QPushButton(tr("signed"));
+		QPushButton *radio1 = new QPushButton(tr("unsigned int"));
+		QPushButton *radio2 = new QPushButton(tr("signed int"));
+		QPushButton *radio3 = new QPushButton(tr("float"));
 		radio1->setSizePolicy(toggleSizePolicy);
 		radio2->setSizePolicy(toggleSizePolicy);
+		radio3->setSizePolicy(toggleSizePolicy);
 		intModeToggleGroup->addButton(radio1);
 		intModeToggleGroup->addButton(radio2);
+		intModeToggleGroup->addButton(radio3);
 		//groupBox->layout()->setAlignment(radio1, Qt::AlignLeft);
 
 		intModeToggleGroup->layout()->setAlignment(radio2, Qt::AlignLeft);
@@ -209,17 +184,29 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 		radio2->setChecked(true);
 		//groupBox->setSizePolicy(toggleSizePolicy); //comment this so last one expands to fill remaining space
+		// TODO: add support for setting mode of individual inputs separately
 		connect(radio1, &QRadioButton::toggled, [=](bool toggled) { if(toggled) {
-				lastIntMode = Mode::Unsigned;
+				lastMode = Mode::Unsigned;
 				calculator->setMode(Mode::Unsigned);
+				reprModeToggleGroup->setEnabled(false); // Repr is the same for unsigned
 				for(const auto inp : inputs) {
 					inp.second->setMode(Mode::Unsigned);
 				}
 		}});
 
 		connect(radio2, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
-				lastIntMode = Mode::Signed;
+				lastMode = Mode::Signed;
 				calculator->setMode(Mode::Signed);
+				reprModeToggleGroup->setEnabled(true);
+				for(const auto inp : inputs) {
+					inp.second->setMode(Mode::Signed);
+				}
+		}});
+
+		connect(radio2, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
+				lastMode = Mode::Signed;
+				calculator->setMode(Mode::Signed);
+				reprModeToggleGroup->setEnabled(true);
 				for(const auto inp : inputs) {
 					inp.second->setMode(Mode::Signed);
 				}
@@ -228,38 +215,36 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		toggleButtonRow->layout()->addWidget(intModeToggleGroup);
 	}
 
-	//float: actual or binary representation
+	//representation mode: human readable or binary (machine) representation
+	//TODO: this should only affect the currently selected input
 	{
-		floatModeToggleGroup = new HorizontalButtonGroup();
+		reprModeToggleGroup = new HorizontalButtonGroup();
 		QPushButton *radio1 = new QPushButton(tr("human repr"));
 		QPushButton *radio2 = new QPushButton(tr("machine repr"));
 		radio1->setSizePolicy(toggleSizePolicy);
 		radio2->setSizePolicy(toggleSizePolicy);
-		floatModeToggleGroup->addButton(radio1);
-		floatModeToggleGroup->addButton(radio2);
+		reprModeToggleGroup->addButton(radio1);
+		reprModeToggleGroup->addButton(radio2);
 
-		floatModeToggleGroup->layout()->setAlignment(radio2, Qt::AlignLeft);
-		floatModeToggleGroup->setEnabled(false);
+		reprModeToggleGroup->layout()->setAlignment(radio2, Qt::AlignLeft);
 
 		radio1->setChecked(true);
 		//groupBox->setSizePolicy(toggleSizePolicy); //comment this so last one expands to fill remaining space
 		connect(radio1, &QRadioButton::toggled, [=](bool toggled) { if(toggled) {
 				lastReprMode = ReprMode::Human;
-				//calculator->setMode(Mode::Unsigned);
 				for(const auto inp : inputs) {
-					inp.second->setFloatMode(ReprMode::Human);
+					inp.second->setReprMode(ReprMode::Human);
 				}
 		}});
 
 		connect(radio2, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
 				lastReprMode = ReprMode::Machine;
-				//calculator->setMode(Mode::Signed);
 				for(const auto inp : inputs) {
-					inp.second->setFloatMode(ReprMode::Machine);
+					inp.second->setReprMode(ReprMode::Machine);
 				}
 		}});
 
-		toggleButtonRow->layout()->addWidget(floatModeToggleGroup);
+		toggleButtonRow->layout()->addWidget(reprModeToggleGroup);
 	}
 
 	//deg/rad bit toggle
@@ -573,7 +558,7 @@ void GUI::openCustomBaseDialog()
 									tr("Base [2 - 36]:"), 2, 2, 36, 1, &ok);
 	if (ok && !findInputForBase(base)) {
 
-		addNewInputBase(new BasicInput(base, lastIntMode, inputBaseToString(base)), true, true);
+		addNewInputBase(new BasicInput(base, lastMode, lastReprMode, inputBaseToString(base)), true, true);
 		saveInputBaseEnabled(base, true);
 	}
 //		integerLabel->setText(tr("%1%").arg(i));

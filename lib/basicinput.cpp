@@ -22,8 +22,8 @@
 #include <QLabel>
 #include "gui.h"
 
-BasicInput::BasicInput(int base, Mode mode, const QString& labelText, const QString& prefix) :
-	Input(base, mode, labelText, true, prefix)
+BasicInput::BasicInput(int base, Mode mode, ReprMode reprMode, const QString& labelText, const QString& prefix) :
+	Input(base, mode, reprMode, labelText, true, prefix)
 {
 	updateValidator();
 	updateLabelText();

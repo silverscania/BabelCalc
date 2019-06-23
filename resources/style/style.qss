@@ -70,12 +70,16 @@ QPushButton:pressed {
 
 QLineEdit#Basic, QLabel {
     font-family: "Source Code Pro No Dot";
-    font-size: 45px;
-    background-color: #00000000;
+    font-size: 50px;
+    background-color: #FFFFFF;
+    base-color: #FF0000;
+    selection-color: #005500;
+    selection-background-color:#FF0000;
+    cursor-color:#FF0000;
     color: white;
     border: none;
-    padding: 0;
-    margin: 0 7px 0 0;
+    padding: 5;
+    margin: 5 7px 0 5;
 }
 QLineEdit#Binary, QLabel#Binary {
     font-family: "Source Code Pro No Dot";

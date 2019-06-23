@@ -25,7 +25,7 @@ class QLabel;
 class BinaryInput : public Input
 {
 	public:
-		BinaryInput(Mode mode);
+		BinaryInput(Mode mode, ReprMode reprMode);
 		void setReprMode(ReprMode mode) override;
 
 	public slots:

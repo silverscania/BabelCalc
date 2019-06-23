@@ -44,6 +44,7 @@ class NarrowLineEdit : public QLineEdit
 		bool canEnterChar(const QString& text);
 		void fixupInput();
 		bool nextInputClears {false};
+		//void paintEvent(QPaintEvent *);
 
 	signals:
 		void focussed(bool hasFocus);

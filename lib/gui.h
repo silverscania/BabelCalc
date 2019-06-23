@@ -71,7 +71,7 @@ private:
 
 	QLineEdit* binaryDisplay;
 	HorizontalButtonGroup* intModeToggleGroup;
-	HorizontalButtonGroup* floatModeToggleGroup;
+	HorizontalButtonGroup* reprModeToggleGroup;
 	Calculator* calculator;
 	Input* activeInput;
 	CalculationHistoryView* calculationHistoryView;
@@ -83,7 +83,7 @@ private:
 	std::map<int, Input*> inputs;
 	std::map<int, QAction*> settingsMenuBases;
 
-	Mode lastIntMode;
+	Mode lastMode;
 	ReprMode lastReprMode;
 	QSettings settings;
 };

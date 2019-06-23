@@ -30,7 +30,7 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 {
 	Q_OBJECT
 	public:
-		explicit Input(int base, Mode mode, const QString& labelText, bool stripLeadingZeros, const QString& prefix = "");
+		explicit Input(int base, Mode mode, ReprMode reprMode, const QString& labelText, bool stripLeadingZeros, const QString& prefix = "");
 		inline virtual ~Input() {}
 
 		void inputDigits(const QString& digit);
@@ -68,5 +68,14 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 
 		virtual void updateValidator();
 		void updateLabelText();
+
+		void setDisplayValueHuman(const Value& value);
+		void setDisplayValueMachine(const Value& value);
+
+		static CalcFloat stringToFloat(const QString& string, int base);
+		static QString floatToString(CalcFloat value, int base, const QString& prefix);
+
+		Value machineInputToValue(const QString& text);
+		Value humanInputToValue(const QString& text);
 };
 

@@ -15,7 +15,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with BabelCalc.  If not, see <http://www.gnu.org/licenses/>.
-
+#include <cmath>
 #include <gtest/gtest.h>
 
 #include "value.h"

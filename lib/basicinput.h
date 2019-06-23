@@ -23,7 +23,7 @@
 class BasicInput : public Input
 {
 	public:
-		BasicInput(int base, Mode mode, const QString& labelText, const QString& prefix = "");
+		BasicInput(int base, Mode mode, ReprMode reprMode, const QString& labelText, const QString& prefix = "");
 
 	protected:
 		void updateValidator() override;

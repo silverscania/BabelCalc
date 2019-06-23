@@ -47,3 +47,6 @@ win32: {
 
 RESOURCES += \
     ../resources/resources.qrc
+
+FORMS += \
+    dialog.ui
