@@ -43,17 +43,12 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	baseStyle.open(QFile::ReadOnly);
 	QString styleSheet = QLatin1String(baseStyle.readAll());
 
-	//Append windows style
-#ifdef Q_OS_WINDOWS
+	// Append non mac style because the GUI is transparent on mac
+	// so needs to be slightly different on other platforms.
+#ifndef Q_OS_MAC
 	QFile winStyle(":/style/windowsstyle.qss");
 	winStyle.open(QFile::ReadOnly);
 	styleSheet += QLatin1String(winStyle.readAll());
-#elif defined(Q_OS_LINUX)
-	QFile winStyle(":/style/linuxstyle.qss");
-	winStyle.open(QFile::ReadOnly);
-	styleSheet += QLatin1String(winStyle.readAll());
-#elif defined(Q_OS_MAC)
-
 #endif
 
 	setStyleSheet(styleSheet);
