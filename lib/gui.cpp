@@ -74,8 +74,9 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 	mainLayout->addLayout(mainCalculatorLayout);
 
-	calculationHistoryView = new CalculationHistoryView;
-	mainLayout->addWidget(calculationHistoryView);
+	// TODO: add history view back in
+//	calculationHistoryView = new CalculationHistoryView;
+//	mainLayout->addWidget(calculationHistoryView);
 
 	//setWindowFlags(Qt::Widget | Qt::FramelessWindowHint); //commented: (makes window transparent on windows)
 	//setAttribute(Qt::WA_NoSystemBackground, true);
@@ -91,14 +92,16 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	QFontDatabase::addApplicationFont ( ":/font/SourceCodePro-Regular.ttf" );
 	QFontDatabase::addApplicationFont ( ":/font/Dosis-Medium.ttf" );
 
-	auto cutAct = new QAction(tr("&History Window"), nullptr);
-	cutAct->setCheckable(true);
-	cutAct->setStatusTip(tr("Cut the current selection's contents to the "
-						   "clipboard"));
+	// TODO: add history view back in
+	//auto cutAct = new QAction(tr("&History Window"), nullptr);
+	//cutAct->setCheckable(true);
+	//cutAct->setStatusTip(tr("Cut the current selection's contents to the "
+	//					   "clipboard"));
 
 	//menu bar
 	auto fileMenu = menuBar()->addMenu(tr("&View"));
-	fileMenu->addAction(cutAct);
+	// TODO: add history view back in
+	//fileMenu->addAction(cutAct);
 
 	settingsMenu = menuBar()->addMenu(tr("&Settings"));
 	settingsMenu->addSeparator()->setText(tr("Bases"));
@@ -429,7 +432,8 @@ void GUI::addNewInputBase(Input* input, bool canDisable, bool enabled)
 	connect(calculator, &Calculator::displayValueChanged, input, &Input::displayValueChanged);
 	connect(calculator, &Calculator::nextInputClearsChanged, input, &Input::setNextInputClears);
 	connect(input, &Input::inputChanged, calculator, &Calculator::setInput);
-	connect(input, &Input::inputChanged, calculationHistoryView, &CalculationHistoryView::setInput);
+	// TODO: add history view back in
+	//connect(input, &Input::inputChanged, calculationHistoryView, &CalculationHistoryView::setInput);
 	input->setObjectName("Input");
 	inputs[input->base] = input;
 
