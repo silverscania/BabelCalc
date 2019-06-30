@@ -2,7 +2,6 @@ QT += widgets
 include(../c++14.pri)
 include(../link-with-core-lib.pri)
 TEMPLATE = app
-INCLUDEPATH += ../lib
 SOURCES += main.cpp
 
 #QMAKE_EXTRA_TARGETS += iconTarget

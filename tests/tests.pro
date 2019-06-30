@@ -8,7 +8,6 @@ CONFIG   -= app_bundle
 CONFIG   += testcase
 
 INCLUDEPATH += \
-    ../lib \
     deps/googletest/googlemock \
     deps/googletest/googletest \
     deps/googletest/googlemock/include \

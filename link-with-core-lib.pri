@@ -3,16 +3,17 @@
 win32: {
     CONFIG( debug, debug|release ) {
         # debug
-        LIB_SEARCH_PATH = ../lib/debug
+        LIB_SEARCH_PATH = ../core/debug
     } else {
         # release
-        LIB_SEARCH_PATH = ../lib/release
+        LIB_SEARCH_PATH = ../core/release
     }
-    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/lib.lib
+    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/core.lib
 }
 else: {
-    LIB_SEARCH_PATH = ../lib
-    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/liblib.a
+    LIB_SEARCH_PATH = ../core
+    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/libcore.a
 }
 QMAKE_LIBDIR += $${LIB_SEARCH_PATH}
-LIBS += -llib
+LIBS += -lcore
+INCLUDEPATH += ../core
