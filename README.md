@@ -52,24 +52,6 @@ It was borne out of the frustration of creating hex values (or ranges of values)
 ##### Ubuntu Runtime Dependencies
 * None
 
-##### How to run a release build
-* $ bin/babelcalc
-
-##### How to build
-* Download Qt 5.11.0 source
-* $ cd {PATH_TO_QT}/Qt/5.11.0/Src
-* $ ./configure -static -system-freetype -fontconfig -debug -prefix {PATH_TO_QT}/Qt/5.11.0/static-build-debug/
-* $ make -j 4
-* $ make -j 4 install
-* Clone BabelCalc repo
-* $ mkdir babelcalc-build-static
-* $ cd babelcalc-build-static
-* $ export PATH={PATH_TO_QT}/Qt/5.11.0/static-build-debug/bin:$PATH
-* $ qmake -config debug ../BabelCalc/
-* $ make
-* $ make check # To run tests (optional)
-* $ make installer # To make the Ubuntu installer (optional)
-
 ##### Qt Note
 This program is open source, but statically links with Qt, which is LGPL licenced. To rebuild BabelCalc with a different version of Qt, you can get the source from here: https://github.com/silverscania/BabelCalc
 

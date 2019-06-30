@@ -4,8 +4,6 @@ include(../link-with-core-lib.pri)
 TEMPLATE = app
 SOURCES += main.cpp
 
-#QMAKE_EXTRA_TARGETS += iconTarget
-
 # Change name of output binary
 TARGET = babelcalc
 
@@ -22,9 +20,9 @@ macx: {
     LIBS += -framework Cocoa
 }
 
-#mac stuff
+QMAKE_EXTRA_TARGETS += iconTarget
+#mac icon
 macx: {
-        #mac icon
         iconTarget.target = icon.icns
         iconTarget.depends =
         iconTarget.commands = cd $${PWD}/icon/ && python generateIconFiles.py && mv tmp/icon.icns $${OUT_PWD}/icon.icns
@@ -32,13 +30,13 @@ macx: {
 }
 
 #windows icon
-#win32: {
-#        iconTarget.target = icon.rc
-#        iconTarget.depends =
-#        iconTarget.commands = cd $${PWD}\icon\ && python generateIconFiles.py && move tmp\icon.rc $${OUT_PWD} && move tmp\icon.ico $${OUT_PWD}
-#
-#        RC_FILE = $${OUT_PWD}/icon.rc
-#}
+win32: {
+        iconTarget.target = icon.rc
+        iconTarget.depends =
+        iconTarget.commands = cd $${PWD}/../icon && python generateIconFiles.py && move tmp\icon.rc $${OUT_PWD} && move tmp\icon.ico $${OUT_PWD}
+
+        RC_FILE = $${OUT_PWD}/icon.rc
+}
 
 RESOURCES += \
     ../resources/resources.qrc
