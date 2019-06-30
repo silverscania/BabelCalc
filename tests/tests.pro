@@ -7,9 +7,25 @@ CONFIG   += console
 CONFIG   -= app_bundle
 CONFIG   += testcase
 
-#Link with the babelcalc library
-LIBS += ../lib/liblib.a
-PRE_TARGETDEPS = ../lib/liblib.a #Force tests to rebuild when lib proj changes
+CONFIG( debug, debug|release ) {
+    # debug
+    LIB_SEARCH_PATH += ../lib/debug
+} else {
+    # release
+    LIB_SEARCH_PATH += ../lib/release
+}
+
+# Qmake doesn't track dependencies of linked libraries. So if lib.lib changes, the app
+# won't rebuild. Use PRE_TARGETDEPS to force this to happen
+win32: {
+    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/lib.lib
+}
+else: {
+    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/liblib.a
+}
+
+QMAKE_LIBDIR += $${LIB_SEARCH_PATH}
+LIBS += -llib
 
 INCLUDEPATH += \
     ../lib \

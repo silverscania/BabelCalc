@@ -1,15 +1,32 @@
 QT += widgets
 include(../c++14.pri)
 
+TEMPLATE = app
 INCLUDEPATH += ../lib
 SOURCES += main.cpp
 
-#Use libs and pre_targetdeps. pre_targetdeps indicates that we're linking
-#with a statis library and this project should be rebuild every time liblib changes.
-LIBS += ../lib/liblib.a
-PRE_TARGETDEPS = ../lib/liblib.a #Force app to rebuild when lib proj changes
+CONFIG( debug, debug|release ) {
+    # debug
+    LIB_SEARCH_PATH += ../lib/debug
+} else {
+    # release
+    LIB_SEARCH_PATH += ../lib/release
+}
 
-QMAKE_EXTRA_TARGETS += iconTarget
+# Qmake doesn't track dependencies of linked libraries. So if lib.lib changes, the app
+# won't rebuild. Use PRE_TARGETDEPS to force this to happen
+win32: {
+    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/lib.lib
+}
+else: {
+    PRE_TARGETDEPS = $${LIB_SEARCH_PATH}/liblib.a
+}
+
+QMAKE_LIBDIR += $${LIB_SEARCH_PATH}
+LIBS += -llib
+
+
+#QMAKE_EXTRA_TARGETS += iconTarget
 
 # Change name of output binary
 TARGET = babelcalc
@@ -37,13 +54,13 @@ macx: {
 }
 
 #windows icon
-win32: {
-        iconTarget.target = icon.rc
-        iconTarget.depends =
-        iconTarget.commands = cd $${PWD}\icon\ && python generateIconFiles.py && move tmp\icon.rc $${OUT_PWD} && move tmp\icon.ico $${OUT_PWD}
-
-        RC_FILE = $${OUT_PWD}/icon.rc
-}
+#win32: {
+#        iconTarget.target = icon.rc
+#        iconTarget.depends =
+#        iconTarget.commands = cd $${PWD}\icon\ && python generateIconFiles.py && move tmp\icon.rc $${OUT_PWD} && move tmp\icon.ico $${OUT_PWD}
+#
+#        RC_FILE = $${OUT_PWD}/icon.rc
+#}
 
 RESOURCES += \
     ../resources/resources.qrc
