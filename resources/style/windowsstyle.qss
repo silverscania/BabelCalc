@@ -19,5 +19,5 @@
 */
 
 #Window {
-    background-color: #ee777777;
+    background-color: #444;
 }

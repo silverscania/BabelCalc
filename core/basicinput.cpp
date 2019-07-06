@@ -28,24 +28,15 @@ BasicInput::BasicInput(int base, Mode mode, ReprMode reprMode, const QString& la
 	updateValidator();
 	updateLabelText();
 
-	// Settings fonts in style sheets doesn't seem to work with static builds
-	QFont font;
-	font.setFamily("Source Code Pro No Dot");
-	font.setLetterSpacing(QFont::AbsoluteSpacing, -2);
-
 	lineEdit->setAlignment(Qt::AlignRight | Qt::AlignBottom);
-	lineEdit->setFont(font);
 	lineEdit->clearFocus(); //todo: not working to stop default focus on app start
     lineEdit->setObjectName("Basic");
 
 	connect(lineEdit, &NarrowLineEdit::textEdited, this, &BasicInput::digitEdit);
 	connect(lineEdit, &NarrowLineEdit::focussed, this, &BasicInput::lineEditFocus);
 
-	QFont labelFont;
-	labelFont.setFamily("Source Code Pro No Dot Light");
 	label->setAlignment(Qt::AlignRight | Qt::AlignBottom);
 	label->setObjectName("baseLabel");
-	label->setFont(labelFont);
 
 	setLayout(new QHBoxLayout);
 
