@@ -79,8 +79,8 @@ QLineEdit, QLabel {
 
 QLineEdit#Basic, QLabel {
     font-size: 50px;
-    padding: 5;
-    margin: 5 7px 0 5;
+    padding: 3;
+    margin: 1 7px 1 5;
 }
 QLineEdit#Binary, QLabel#Binary {
     font-size: 14px;

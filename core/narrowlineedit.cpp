@@ -53,7 +53,8 @@ QSize NarrowLineEdit::getNarrowLineSize() const
 	getContentsMargins(&marginLeft, &marginRight, &marginTop, &marginBottom);
 	size += QSize(marginLeft+marginRight, marginTop+marginBottom);
 
-	return size + QSize(15, 0);
+    // Add a bit otherwise the text gets cropped, not sure why
+    return size + QSize(30, 0);
 }
 
 QString NarrowLineEdit::getStrippedInput() const
