@@ -68,25 +68,22 @@ QPushButton:pressed {
     background-color: #DDD;
 }
 
-QLineEdit#Basic, QLabel {
+QLineEdit, QLabel {
     font-family: "Source Code Pro No Dot";
-    font-size: 50px;
-    background-color: #FFFFFF;
-    base-color: #FF0000;
-    selection-color: #005500;
-    selection-background-color:#FF0000;
-    cursor-color:#FF0000;
+    /* background color can't be transparent otherwise
+     * the cursor is also transparent */
+    background-color: #444;
     color: white;
     border: none;
+}
+
+QLineEdit#Basic, QLabel {
+    font-size: 50px;
     padding: 5;
     margin: 5 7px 0 5;
 }
 QLineEdit#Binary, QLabel#Binary {
-    font-family: "Source Code Pro No Dot";
     font-size: 14px;
-    background-color: #00000000;
-    color: white;
-    border: none;
     padding: 0;
     margin: 0px 7px 0 0;
 }
@@ -110,9 +107,10 @@ QLabel#baseLabel {
     background-color: #33FFFFFF;
     border-bottom: 1px solid #55000000;
 }
+
 #Input {
-    border-bottom: 1px solid #66FFFFFF;
-    background-color: #22000000;
+    border-bottom: 1px solid #FFFFFF;
+        background-color: #444;
 }
 #MainGrid {
     background-color: #22FFFFFF;

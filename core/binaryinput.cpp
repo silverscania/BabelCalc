@@ -29,7 +29,6 @@ BinaryInput::BinaryInput(Mode mode, ReprMode reprMode) :
 	updateLabelText();
 
 	lineEdit->setAlignment(Qt::AlignRight | Qt::AlignBottom);
-	//lineEdit->setFont(font);
 	lineEdit->clearFocus(); //todo: not working to stop default focus on app start
     lineEdit->setObjectName("Binary");
 	lineEdit->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
