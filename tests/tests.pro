@@ -13,11 +13,12 @@ INCLUDEPATH += \
     deps/googletest/googlemock/include \
     deps/googletest/googletest/include
 
-SOURCES += \ #tests/variablesizetest.cpp \
+SOURCES += \
     deps/googletest/googlemock/src/gmock-all.cc \
     deps/googletest/googletest/src/gtest-all.cc \
     main.cpp \
     testcalculator.cpp \
-    testvariablesizes.cpp
+    testvariablesizes.cpp \
+    testinput.cpp
 
 HEADERS +=

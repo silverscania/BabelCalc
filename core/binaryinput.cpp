@@ -68,6 +68,7 @@ BinaryInput::BinaryInput(Mode mode, ReprMode reprMode) :
  */
 void BinaryInput::setReprMode(ReprMode mode)
 {
+	Input::setReprMode(mode);
 	if(mode == ReprMode::Human) {
 		binaryMarker->setVisible(false);
 	}

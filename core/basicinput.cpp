@@ -69,8 +69,8 @@ void BasicInput::updateValidator()
 	const QString signedPrefix = mode == Mode::Signed ? "-?" : "";
 	QString pattern;
 
-	//set validator. Base 10 floating point is a special case (supports floating point)
-	if(base == 10 && mode == Mode::Float) {
+	//set validator.
+	if(mode == Mode::Float) {
 		pattern = QString("-?%1[0-9]+\\.?[0-9]*((e-)|(e))?[0-9]*").arg(prefix);
 	}
 	else if(base <= 10) {

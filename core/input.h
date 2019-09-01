@@ -41,6 +41,8 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 		virtual void setReprMode(ReprMode mode);
 		void setBitWidth(BitWidth bitWidth);
 		void blink();
+		static CalcFloat stringToFloat(QString string, int base, bool* ok);
+		static QString floatToString(CalcFloat value, int base, const QString& prefix);
 
 		const int base;
 		const QString prefix;
@@ -71,9 +73,6 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 
 		void setDisplayValueHuman(const Value& value);
 		void setDisplayValueMachine(const Value& value);
-
-		static CalcFloat stringToFloat(const QString& string, int base);
-		static QString floatToString(CalcFloat value, int base, const QString& prefix);
 
 		Value machineInputToValue(const QString& text);
 		Value humanInputToValue(const QString& text);

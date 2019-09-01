@@ -109,9 +109,45 @@ void Input::setDisplayValueMachine(const Value& value) {
 	}
 }
 
-CalcFloat Input::stringToFloat(const QString& string, int base)
+CalcFloat Input::stringToFloat(QString string, int base, bool* ok)
 {
-	return 0.0f;
+	Q_ASSERT(ok);
+	*ok = true;
+	//TODO: must have for MVP
+	//TODO: validation should use the ok parameter of this function
+
+	// Prepend with "0" in case the string is empty or starts with "."
+	string = "0" + string;
+
+	if(base == 10) {
+		// Use Qt for support of e notation which is only available in
+		// base 10.
+		return string.toFloat(ok);
+	}
+
+	// Split on "." to get units and fractional part. "." is optional
+	const QStringList split = string.split(".");
+	if(split.length() > 2) {
+		*ok = false;
+		return 0.0f;
+	}
+	const QString units = split[0];
+	const QString fractions = split.length()>1 ? split[1] : "0";
+
+	CalcFloat value = 0;
+
+	// Convert units
+	for(int i = 0; i < units.length(); ++i) {
+		const CalcFloat floatBase = static_cast<CalcFloat>(base);
+		const CalcFloat multiplier = floatBase * units.length() - i - 1;
+		const int digit = units.midRef(i,1).toInt(ok, base);
+		if(*ok == false) {
+			return 0.0f;
+		}
+		value += digit *  multiplier;
+	}
+
+	return value;
 }
 
 QString Input::floatToString(CalcFloat value, int base, const QString& prefix)
@@ -127,9 +163,14 @@ QString Input::floatToString(CalcFloat value, int base, const QString& prefix)
 
 	// Stop once MAX_DIGITS is reached, or the exact value was represented
 	// TODO: support e notation
+	bool ok = false;
 	for(int i = 0; i < MIN_DECIMALS ||
-		(i < MAX_DECIMALS && stringToFloat(sign + string, base) == value); ++i)
+		(i < MAX_DECIMALS && stringToFloat(sign + string, base, &ok) == value); ++i)
 	{
+		if(ok == false) {
+			break;
+		}
+
 		CalcFloat fractionAsInteger = floor(value * pow((double) base, i));
 		QString fractionDigit = QString::number((CalcInt)floor(fractionAsInteger), base);
 
@@ -181,7 +222,9 @@ Value Input::humanInputToValue(const QString& inputText)
 			return Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
 		}
 		case Mode::Float: {
-			CalcFloat val {stringToFloat(inputText, base)};
+			bool ok = false;
+			// TODO: pass ok out of this function (or use exceptions?)
+			CalcFloat val {stringToFloat(inputText, base, &ok)};
 			return Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
 		}
 	}
