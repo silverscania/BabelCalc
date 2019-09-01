@@ -134,17 +134,21 @@ CalcFloat Input::stringToFloat(QString string, int base, bool* ok)
 	const QString units = split[0];
 	const QString fractions = split.length()>1 ? split[1] : "0";
 
-	CalcFloat value = 0;
-
 	// Convert units
-	for(int i = 0; i < units.length(); ++i) {
-		const CalcFloat floatBase = static_cast<CalcFloat>(base);
-		const CalcFloat multiplier = floatBase * units.length() - i - 1;
-		const int digit = units.midRef(i,1).toInt(ok, base);
+	CalcFloat value = units.toInt(ok, base);
+	if(*ok == false) {
+		return 0.0f;
+	}
+
+	// Convert fractions
+	for(int i = 0; i < fractions.length(); ++i) {
+		const double floatBase = static_cast<double>(base);
+		const double divisor = pow(floatBase, i+1);
+		const int digit = fractions.midRef(i,1).toInt(ok, base);
 		if(*ok == false) {
 			return 0.0f;
 		}
-		value += digit *  multiplier;
+		value += digit / divisor;
 	}
 
 	return value;
