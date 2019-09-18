@@ -91,14 +91,14 @@ void NarrowLineEdit::fixupInput() {
 
 void NarrowLineEdit::handleKeyInput(QKeyEvent *event)
 {
+	if(nextInputClears) {
+		setText(prefix + "0");
+	}
+
 	//Don't do anything if not a valid char (also ignore the event so the gui gets the '-' key)
 	if(!canEnterChar(event->text())) {
 		event->ignore();
 		return;
-	}
-
-	if(nextInputClears) {
-		setText(prefix + "0");
 	}
 
 	QLineEdit::keyPressEvent(event);
