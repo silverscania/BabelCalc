@@ -66,16 +66,19 @@ QString NarrowLineEdit::getStrippedInput() const
 void NarrowLineEdit::fixupInput() {
 	bool modified = false;
 
-	//check there is a digit
+	// If the field is completely empty, insert a zero
+	// so that there is always something displaying
 	QString stripped = getStrippedInput();
 	if(stripped.length() == 0) {
 		stripped = "0";
 		modified = true;
 	}
 
-	//strip leading zeros
+	// Make sure that there are no leading zeros. There is a special
+	// case for floating point numbers starting with "0.".
 	if(stripLeadingZeros) {
-		while(stripped.length() > 1 && stripped[0] == '0') {
+		while(stripped.length() > 1 && stripped[0] == '0' &&
+			  stripped.startsWith("0.") == false) {
 			stripped = stripped.mid(1);
 			modified = true;
 		}

@@ -67,11 +67,19 @@ void BasicInput::updateValidator()
 	}
 
 	const QString signedPrefix = mode == Mode::Signed ? "-?" : "";
-	QString pattern;
+	QString validDigits;
+	if(base <= 10) {
+		validDigits = QString("[0-%1]").arg(QString(nums[base-1]));
+	}
+	else {
+		validDigits = QString("[0-9,a-%1]").arg(QString(lowerAlph[base-10-1]));
+	}
 
+	QString pattern;
 	//set validator.
 	if(mode == Mode::Float) {
-		pattern = QString("-?%1[0-9]+\\.?[0-9]*((e-)|(e))?[0-9]*").arg(prefix);
+		// -?[0-9]+(\.[0-9]+)?(e-?[0-9]+)?
+		pattern = QString(R"(-?%1%2+\.?%2*e?-?%2*)").arg(prefix, validDigits);
 	}
 	else if(base <= 10) {
 		//TODO: pattern = support E notation for ints QString("%1%2[0-9]+e*-*[0-9]*").arg(signedPrefix, prefix);

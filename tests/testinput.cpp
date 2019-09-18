@@ -99,3 +99,16 @@ TEST(TestInput, testEmptyString)
 	EXPECT_EQ(Input::stringToFloat("",     10, &ok), 0.0f);  EXPECT_TRUE(ok);
 	EXPECT_EQ(Input::stringToFloat("",     26, &ok), 0.0f);  EXPECT_TRUE(ok);
 }
+
+TEST(TestInput, testFloatToString)
+{
+	bool ok = false;
+	EXPECT_EQ(Input::floatToString(1.234, 10, ""), "1.234");
+	EXPECT_EQ(Input::floatToString(1234567.234567, 10, ""), "1234567.234567");
+
+	EXPECT_EQ(Input::floatToString(1/3.0f, 3, ""), "0.1");
+	EXPECT_EQ(Input::floatToString(2/3.0f, 3, ""), "0.2");
+	EXPECT_EQ(Input::floatToString(1/3.0f + 2/9.0f, 3, ""), "0.12");
+	EXPECT_EQ(Input::floatToString(0.61179698216f, 3, ""), "0.12111122");
+	EXPECT_EQ(Input::floatToString(6+(2/3.0f), 3, ""), "20.12222222");
+}

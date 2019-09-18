@@ -76,5 +76,8 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 
 		Value machineInputToValue(const QString& text);
 		Value humanInputToValue(const QString& text);
+
+	private:
+		static QString floatToStringFractions(CalcFloat value, int base);
 };
 

@@ -31,7 +31,7 @@
 GUI::GUI(Calculator* calc, QWidget* parent)
 	: QMainWindow(parent),
 	  calculator(calc),
-	  lastMode(Mode::Signed),
+	  currentMode(Mode::Signed),
 	  lastReprMode(ReprMode::Human),
 	  settings("Bits Of Beards", "BabelCalc")
 {
@@ -116,7 +116,6 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 	addNewInputBase(new BasicInput(16, Mode::Signed, ReprMode::Human, inputBaseToString(16), "0x"), false, true);
 	addNewInputBase(new BasicInput(8, Mode::Signed, ReprMode::Human, inputBaseToString(8)), true, false);
 	addNewInputBase(new BinaryInput(Mode::Signed, ReprMode::Machine), false, true);
-	//setInputBaseEnabled(8, false); //octal off by default
 
 	for(int base = 2; base <= 26; ++base) {
 		const QString baseName = QString("base-%1").arg(base); //dont translate settings keys
@@ -183,8 +182,10 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		radio2->setChecked(true);
 		//groupBox->setSizePolicy(toggleSizePolicy); //comment this so last one expands to fill remaining space
 		// TODO: add support for setting mode of individual inputs separately
+		//       Should changing the mode only change the currently selected
+		//       input?
 		connect(radio1, &QRadioButton::toggled, [=](bool toggled) { if(toggled) {
-				lastMode = Mode::Unsigned;
+				currentMode = Mode::Unsigned;
 				calculator->setMode(Mode::Unsigned);
 				reprModeToggleGroup->setEnabled(false); // Repr is the same for unsigned
 				for(const auto inp : inputs) {
@@ -193,7 +194,7 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		}});
 
 		connect(radio2, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
-				lastMode = Mode::Signed;
+				currentMode = Mode::Signed;
 				calculator->setMode(Mode::Signed);
 				reprModeToggleGroup->setEnabled(true);
 				for(const auto inp : inputs) {
@@ -201,12 +202,12 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 				}
 		}});
 
-		connect(radio2, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
-				lastMode = Mode::Signed;
-				calculator->setMode(Mode::Signed);
+		connect(radio3, &QRadioButton::toggled, [=](bool toggled){ if(toggled) {
+				currentMode = Mode::Float;
+				calculator->setMode(Mode::Float);
 				reprModeToggleGroup->setEnabled(true);
 				for(const auto inp : inputs) {
-					inp.second->setMode(Mode::Signed);
+					inp.second->setMode(Mode::Float);
 				}
 		}});
 
@@ -557,7 +558,7 @@ void GUI::openCustomBaseDialog()
 									tr("Base [2 - 36]:"), 2, 2, 36, 1, &ok);
 	if (ok && !findInputForBase(base)) {
 
-		addNewInputBase(new BasicInput(base, lastMode, lastReprMode, inputBaseToString(base)), true, true);
+		addNewInputBase(new BasicInput(base, currentMode, lastReprMode, inputBaseToString(base)), true, true);
 		saveInputBaseEnabled(base, true);
 	}
 //		integerLabel->setText(tr("%1%").arg(i));

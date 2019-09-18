@@ -154,32 +154,64 @@ CalcFloat Input::stringToFloat(QString string, int base, bool* ok)
 	return value;
 }
 
+///**
+// * Get the string of the digits after the decimal point of a float number.
+// */
+//QString Input::floatToStringFractions(CalcFloat value, int base)
+//{
+//	const int MAX_DECIMALS = 8;
+
+//	QString string;
+//	// TODO: support e notation
+//	for(int i = 1; i <= MAX_DECIMALS; ++i)
+//	{
+//		CalcFloat fractionAsInteger = floor(value * pow((double) base, i));
+//		QString fractionDigit =
+//				QString::number((CalcInt)floor(fractionAsInteger), base);
+
+//		// Take the last character. Anything higher is from previous digits
+//		string += fractionDigit.right(1);
+//	}
+
+//	// Strip trailing zeros
+//	return string.replace(QRegExp("0+$"), "");
+//}
+
+/**
+ * Get the string of the digits after the decimal point of a float number.
+ */
+QString Input::floatToStringFractions(CalcFloat value, int base)
+{
+	const int MAX_DECIMALS = 8;
+
+	// Extract just fractional part
+	double unused;
+	value = modf(value, &unused);
+
+	CalcFloat fractionAsInteger = value * pow((double) base, 8);
+	QString string =
+			QString::number((CalcInt) fractionAsInteger, base);
+
+	// Strip trailing zeros
+	return string.replace(QRegExp("0+$"), "");
+}
+
 QString Input::floatToString(CalcFloat value, int base, const QString& prefix)
 {
-	const int MAX_DECIMALS = 6;
-	const int MIN_DECIMALS = 1;
 	// Take sign, and then make it +ve for the rest of the function
 	const QString sign = value < 0 ? "-" : "";
 	value = fabs(value);
 
 	// Start with integer part and "."
-	QString string = QString::number((CalcUInt) floor(value), base) + ".";
+	QString string = QString::number((CalcUInt) floor(value), base);
 
-	// Stop once MAX_DIGITS is reached, or the exact value was represented
-	// TODO: support e notation
 	bool ok = false;
-	for(int i = 0; i < MIN_DECIMALS ||
-		(i < MAX_DECIMALS && stringToFloat(sign + string, base, &ok) == value); ++i)
-	{
-		if(ok == false) {
-			break;
-		}
+	const bool exact = stringToFloat(sign + string, base, &ok) == value;
+	Q_ASSERT(ok);
 
-		CalcFloat fractionAsInteger = floor(value * pow((double) base, i));
-		QString fractionDigit = QString::number((CalcInt)floor(fractionAsInteger), base);
-
-		// Take the last character. Anything higher is from previous digits
-		string += fractionDigit.right(1);
+	// Add fractional part if the number wasn't represented exactly
+	if(!exact) {
+		string += "." + floatToStringFractions(value, base);
 	}
 
 	return sign + prefix + string;

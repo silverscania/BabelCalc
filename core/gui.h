@@ -83,7 +83,7 @@ private:
 	std::map<int, Input*> inputs;
 	std::map<int, QAction*> settingsMenuBases;
 
-	Mode lastMode;
+	Mode currentMode;
 	ReprMode lastReprMode;
 	QSettings settings;
 };
