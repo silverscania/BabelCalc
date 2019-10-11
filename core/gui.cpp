@@ -150,7 +150,6 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 
 		groupBox->addButton(radio1);
 		groupBox->addButton(radio2);
-		//groupBox->layout()->setAlignment(radio1, Qt::AlignLeft);
 		groupBox->layout()->setAlignment(radio2, Qt::AlignLeft);
 
 		radio1->setChecked(true);
@@ -177,7 +176,6 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		//groupBox->layout()->setAlignment(radio1, Qt::AlignLeft);
 
 		intModeToggleGroup->layout()->setAlignment(radio2, Qt::AlignLeft);
-
 
 		radio2->setChecked(true);
 		//groupBox->setSizePolicy(toggleSizePolicy); //comment this so last one expands to fill remaining space
@@ -345,7 +343,8 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		gridLayout->addWidget(createButton<MultiplicationOperator>	(tr("x"), "Action"), row, col++);
 		gridLayout->addWidget(createButton<AdditionOperator>		(tr("+"), "Action"), row, col++);
 		gridLayout->addWidget(createButton(							tr("rand"), [=] {calculator->inputRandomNumber();}), row, col++);
-		gridLayout->addWidget(createButton(							tr("EE"),	[=] {findInputForBase(10)->inputDigits("e");}), row, col++);
+		gridLayout->addWidget(createButton(							"",	[] {}), row, col++);
+
 		gridLayout->addWidget(createButton<Log10Operator>			(tr("log₁₀")), row, col++);
 		gridLayout->addWidget(createButton<TenPowOperator>			(tr("10ˣ")), row, col++);
 		gridLayout->addWidget(createButton<ACoshOperator>			(tr("cosh⁻¹")), row++, col++);

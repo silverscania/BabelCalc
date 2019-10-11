@@ -44,7 +44,7 @@ QSize NarrowLineEdit::getNarrowLineSize() const
 	ensurePolished();
 	QFontMetrics fm(font());
 
-	auto size = fm.boundingRect(displayText()).size(); //QSize(300, 10);
+	auto size = fm.size(0, displayText());
 
 	int marginLeft, marginRight, marginTop, marginBottom;
 	getTextMargins(&marginLeft, &marginRight, &marginTop, &marginBottom);
@@ -54,7 +54,7 @@ QSize NarrowLineEdit::getNarrowLineSize() const
 	size += QSize(marginLeft+marginRight, marginTop+marginBottom);
 
     // Add a bit otherwise the text gets cropped, not sure why
-    return size + QSize(30, 0);
+	return size + QSize(30, 0);
 }
 
 QString NarrowLineEdit::getStrippedInput() const
