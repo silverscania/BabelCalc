@@ -147,6 +147,8 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		QPushButton *radio2 = new QPushButton(tr("64bit"));
 		radio1->setSizePolicy(toggleSizePolicy);
 		radio2->setSizePolicy(toggleSizePolicy);
+		radio1->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+		radio2->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
 		groupBox->addButton(radio1);
 		groupBox->addButton(radio2);
@@ -168,12 +170,15 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		QPushButton *radio2 = new QPushButton(tr("signed int"));
 		QPushButton *radio3 = new QPushButton(tr("float"));
 		radio1->setSizePolicy(toggleSizePolicy);
+		radio1->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 		radio2->setSizePolicy(toggleSizePolicy);
+		radio2->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 		radio3->setSizePolicy(toggleSizePolicy);
+		radio3->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+
 		intModeToggleGroup->addButton(radio1);
 		intModeToggleGroup->addButton(radio2);
 		intModeToggleGroup->addButton(radio3);
-		//groupBox->layout()->setAlignment(radio1, Qt::AlignLeft);
 
 		intModeToggleGroup->layout()->setAlignment(radio2, Qt::AlignLeft);
 
@@ -220,6 +225,9 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		QPushButton *radio2 = new QPushButton(tr("machine repr"));
 		radio1->setSizePolicy(toggleSizePolicy);
 		radio2->setSizePolicy(toggleSizePolicy);
+		radio1->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+		radio2->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+
 		reprModeToggleGroup->addButton(radio1);
 		reprModeToggleGroup->addButton(radio2);
 
@@ -251,6 +259,8 @@ GUI::GUI(Calculator* calc, QWidget* parent)
 		QPushButton *radio2 = new QPushButton(tr("radians"));
 		radio1->setSizePolicy(toggleSizePolicy);
 		radio2->setSizePolicy(toggleSizePolicy);
+		radio1->setFocusPolicy(Qt::FocusPolicy::NoFocus);
+		radio2->setFocusPolicy(Qt::FocusPolicy::NoFocus);
 
 		groupBox->addButton(radio1);
 		groupBox->addButton(radio2);
