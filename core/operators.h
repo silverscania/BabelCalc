@@ -82,8 +82,8 @@ struct BinaryOperator : public Operator {
 	inline Value evaluate(const Value &lhs, const Value &rhs) const override { \
 		const CalcInt intVal = PostOp (lhs.intVal Op rhs.intVal); \
 		const CalcUInt uIntVal = PostOp (lhs.uIntVal Op rhs.uIntVal); \
-		const CalcUInt fVal = PostOp (*reinterpret_cast<const CalcUInt*>(&lhs.floatVal) Op *reinterpret_cast<const CalcUInt*>(&rhs.floatVal)); \
-		return Value(intVal, *reinterpret_cast<const CalcFloat*>(&fVal), uIntVal); \
+		const CalcUInt fVal = PostOp Value::floatToRaw(lhs.floatVal) Op Value::floatToRaw(rhs.floatVal); \
+		return Value(intVal, Value::rawToFloat(fVal), uIntVal); \
 	} \
 };
 
@@ -91,8 +91,8 @@ struct BinaryOperator : public Operator {
 	inline Value evaluate(const Value &rhs) const override { \
 		const CalcInt intVal = Op rhs.intVal PostOp; \
 		const CalcUInt uIntVal = Op rhs.uIntVal PostOp; \
-		const CalcUInt fVal = Op *reinterpret_cast<const CalcUInt*>(&rhs.floatVal); \
-		return Value(intVal, *reinterpret_cast<const CalcFloat*>(&fVal), uIntVal); \
+		const CalcUInt fVal = Op Value::floatToRaw(rhs.floatVal); \
+		return Value(intVal, Value::rawToFloat(fVal), uIntVal); \
 	} \
 };
 
@@ -151,7 +151,7 @@ struct RotateLeftOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = rotate(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = rotate(rhs.uIntVal);
-		const CalcUInt fVal = rotate(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = rotate(Value::floatToRaw(rhs.floatVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}
@@ -167,7 +167,7 @@ struct RotateRightOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = rotate(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = rotate(rhs.uIntVal);
-		const CalcUInt fVal = rotate(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = rotate(Value::floatToRaw(rhs.floatVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}
@@ -207,7 +207,7 @@ struct ByteReverseOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = reverse(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = reverse(rhs.uIntVal);
-		const CalcUInt fVal = reverse(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = reverse(Value::floatToRaw(rhs.floatVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}
@@ -225,7 +225,7 @@ struct SwapHalvesOperator : public UnaryOperator {
 	inline Value evaluate(const Value &rhs) const override {
 		const CalcUInt intVal = reverse(static_cast<CalcUInt>(rhs.intVal));
 		const CalcUInt uIntVal = reverse(rhs.uIntVal);
-		const CalcUInt fVal = reverse(*reinterpret_cast<const CalcUInt*>(&rhs.floatVal));
+		const CalcUInt fVal = reverse(Value::floatToRaw(rhs.floatVal));
 
 		return Value(intVal, fVal, uIntVal);
 	}

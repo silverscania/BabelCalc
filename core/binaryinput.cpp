@@ -111,8 +111,8 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 		switch (mode) {
 			case Mode::Signed:
 			{
-				auto nosign = reinterpret_cast<const CalcUInt*>(&(value.intVal));
-				binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
+				binary = QString("%1").arg(Value::intToRaw(value.intVal),
+										   64, base, QLatin1Char('0'));
 				break;
 			}
 			case Mode::Unsigned:
@@ -121,8 +121,8 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 
 			case Mode::Float:
 			{
-				auto nosign = reinterpret_cast<const CalcUInt*>(&(value.floatVal));
-				binary = QString("%1").arg(*nosign, 64, base, QLatin1Char('0'));
+				binary = QString("%1").arg(Value::floatToRaw(value.floatVal),
+										   64, base, QLatin1Char('0'));
 				break;
 			}
 			default:
