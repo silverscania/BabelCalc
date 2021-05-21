@@ -134,13 +134,21 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 	for(int i = 4; i < binary.length(); i+=5) {
 		binary.insert(i, " ");
 	}
+
+	// Workaround for binary edit only. Sign of number can change on update.
+	// Normal inputs have validators with optional signs. But binaryInput uses
+	// setInputMask which doesn't, so it needs to be updated every time to
+	// update sign.
+	updateValidator();
+
 	lineEdit->setText(sign+binary);
 }
 
 void BinaryInput::updateValidator()
 {
 	QString signedPrefix;
-	if(mode == Mode::Signed && value.intVal < 0) {
+	if(reprMode == ReprMode::Human && mode == Mode::Signed && value.intVal < 0)
+	{
 		signedPrefix = "-";
 	}
 	else {
