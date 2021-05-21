@@ -66,7 +66,7 @@ void BasicInput::updateValidator()
 		lineEdit->setMaxLength(getMaxLength());
 	}
 
-	const QString signedPrefix = mode == Mode::Signed ? "-?" : "";
+	const QString signedPrefix = mode == Mode::Signed && reprMode == ReprMode::Human ? "-?" : "";
 	QString validDigits;
 	if(base <= 10) {
 		validDigits = QString("[0-%1]").arg(QString(nums[base-1]));
