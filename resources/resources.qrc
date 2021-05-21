@@ -4,7 +4,6 @@
         <file>font/Source Code Pro No Dot Light.ttf</file>
         <file>style/style.qss</file>
         <file>style/windowsstyle.qss</file>
-        <file>style/linuxstyle.qss</file>
         <file>font/Dosis-Medium.ttf</file>
         <file>font/SourceCodePro-Regular.ttf</file>
     </qresource>
