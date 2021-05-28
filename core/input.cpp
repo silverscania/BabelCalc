@@ -217,6 +217,16 @@ QString Input::floatToString(CalcFloat value, int base, const QString& prefix)
 	return sign + prefix + string;
 }
 
+/**
+ * Calls any virtual functions that cannot be called in constructor that
+ * are required to be done before displaying.
+ */
+void Input::postConstruction()
+{
+	updateValidator();
+	updateLabelText();
+}
+
 void Input::setNextInputClears(bool inputClears)
 {
 	if(inputClears) {

@@ -437,6 +437,8 @@ void GUI::addNewInputBase(Input* input, bool canDisable, bool enabled)
 	connect(calculator, &Calculator::displayValueChanged, input, &Input::displayValueChanged);
 	connect(calculator, &Calculator::nextInputClearsChanged, input, &Input::setNextInputClears);
 	connect(input, &Input::inputChanged, calculator, &Calculator::setInput);
+	input->postConstruction();
+
 	// TODO: add history view back in
 	//connect(input, &Input::inputChanged, calculationHistoryView, &CalculationHistoryView::setInput);
 	input->setObjectName("Input");

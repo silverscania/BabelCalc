@@ -25,7 +25,7 @@ struct Value;
 class NarrowLineEdit;
 class QLabel;
 class QPropertyAnimation;
-
+class QGridLayout;
 class Input : public QFrame //Inherit from QFrame instead of QWidget to support stylesheets (http://stackoverflow.com/a/22094319/3640643)
 {
 	Q_OBJECT
@@ -43,6 +43,7 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 		void blink();
 		static CalcFloat stringToFloat(QString string, int base, bool* ok);
 		static QString floatToString(CalcFloat value, int base, const QString& prefix);
+		void postConstruction();
 
 		const int base;
 		const QString prefix;
@@ -60,6 +61,7 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 		void lineEditFocus(bool focused);
 
 	protected:
+		QGridLayout* grid;
 		NarrowLineEdit* lineEdit;
 		QLabel* label;
 		Mode mode;

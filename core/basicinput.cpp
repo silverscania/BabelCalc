@@ -25,9 +25,6 @@
 BasicInput::BasicInput(int base, Mode mode, ReprMode reprMode, const QString& labelText, const QString& prefix) :
 	Input(base, mode, reprMode, labelText, true, prefix)
 {
-	updateValidator();
-	updateLabelText();
-
 	lineEdit->setAlignment(Qt::AlignRight | Qt::AlignBottom);
 	lineEdit->clearFocus(); //todo: not working to stop default focus on app start
     lineEdit->setObjectName("Basic");
@@ -38,14 +35,21 @@ BasicInput::BasicInput(int base, Mode mode, ReprMode reprMode, const QString& la
 	label->setAlignment(Qt::AlignRight | Qt::AlignBottom);
 	label->setObjectName("baseLabel");
 
-	setLayout(new QHBoxLayout);
+	grid = new QGridLayout;
+	setLayout(grid);
+	layout()->setSpacing(0);
+	layout()->setMargin(0);
+	setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
+
+	grid->addWidget(lineEdit, 0, 1);
 
 	layout()->setSpacing(0);
 	layout()->setMargin(0);
 	setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
 	layout()->setAlignment(Qt::AlignRight);
-	layout()->addWidget(label);
-	layout()->addWidget(lineEdit);
+	grid->addWidget(label, 0, 0, 2, 1, Qt::AlignRight);
+
+	grid->addWidget(lineEdit, 0, 1);
 	layout()->setAlignment(label, Qt::AlignRight);
 	layout()->setAlignment(lineEdit, Qt::AlignRight);
 }

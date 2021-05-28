@@ -18,11 +18,11 @@
 
 #pragma once
 
-#include "input.h"
+#include "basicinput.h"
 
 class QLabel;
 
-class BinaryInput : public Input
+class BinaryInput : public BasicInput
 {
 	public:
 		BinaryInput(Mode mode, ReprMode reprMode);

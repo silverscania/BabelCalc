@@ -23,41 +23,18 @@
 #include <QGridLayout>
 
 BinaryInput::BinaryInput(Mode mode, ReprMode reprMode) :
-	Input(2, mode, reprMode, "binary", false)
+	BasicInput(2, mode, reprMode, "binary")
 {
-	updateValidator();
-	updateLabelText();
-
-	lineEdit->setAlignment(Qt::AlignRight | Qt::AlignBottom);
-	lineEdit->clearFocus(); //todo: not working to stop default focus on app start
-    lineEdit->setObjectName("Binary");
-	lineEdit->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
-	connect(lineEdit, &NarrowLineEdit::textEdited, this, &BinaryInput::digitEdit);
-	connect(lineEdit, &NarrowLineEdit::focussed, this, &BinaryInput::lineEditFocus);
-
-	label->setAlignment(Qt::AlignRight | Qt::AlignBottom);
-	label->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Maximum);
-	label->setObjectName("baseLabel");
-
-	QGridLayout* grid = new QGridLayout;
-	setLayout(grid);
-	layout()->setSpacing(0);
-	layout()->setMargin(0);
-	setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Policy::Fixed);
-
-	grid->addWidget(lineEdit, 0, 1);
-	grid->addWidget(label, 0, 0, 2, 1, Qt::AlignRight);
+	// Object name is used by style sheets to set font size
+	lineEdit->setObjectName("Binary");
 
 	//binary markers
 	QString binaryMarkerString = QString("63     56 %1 48 %1 40 %1 32 %1 24 %1 16 %2 8 %2 0").arg("      ", "       ");
 	binaryMarker = new QLabel(binaryMarkerString);
-	//binaryMarker->setReadOnly(true);
-	//binaryMarker->setFont(font);
 	binaryMarker->setAlignment(Qt::AlignRight);
     binaryMarker->setStyleSheet("margin-bottom: 8px;");
     binaryMarker->setObjectName("Binary");
 	grid->addWidget(binaryMarker, 1, 1);
-
 }
 
 /**
@@ -147,13 +124,19 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 void BinaryInput::updateValidator()
 {
 	QString signedPrefix;
-	if(reprMode == ReprMode::Human && mode == Mode::Signed && value.intVal < 0)
+	if(reprMode == ReprMode::Human && mode == Mode::Signed)
 	{
-		signedPrefix = "-";
+		// Don't show 64th bit, instead show - sign.
+		// Setting 64th bit manually shouldn't be allowed, becase then adding the
+		// - sign would make a number too big to represent in 64 bits. You'd need
+		// 65 bits.
+		if (value.intVal < 0)
+			signedPrefix = "-";
 	}
 	else {
-		signedPrefix = "";
+		// 64th bit is visible in unsigned and machine mode
+		signedPrefix = "B";
 	}
 
-	lineEdit->setInputMask(signedPrefix + "BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB;0");
+	lineEdit->setInputMask(signedPrefix + "BBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB;0");
 }
