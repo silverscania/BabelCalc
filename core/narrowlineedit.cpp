@@ -63,6 +63,11 @@ QString NarrowLineEdit::getStrippedInput() const
 	return stripped.replace(prefix, "").replace(" ", "");
 }
 
+void NarrowLineEdit::setStripLeadingZeros(bool strip)
+{
+	stripLeadingZeros = strip;
+}
+
 void NarrowLineEdit::fixupInput() {
 	bool modified = false;
 

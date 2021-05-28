@@ -32,7 +32,7 @@ class NarrowLineEdit : public QLineEdit
 		inline void setNextInputClears(bool inputClears) { nextInputClears = inputClears; }
 		void insert(const QString &);
 		QString getStrippedInput() const;
-
+		void setStripLeadingZeros(bool strip);
 		const QString prefix;
 
 	private:

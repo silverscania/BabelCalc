@@ -63,15 +63,13 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 		return;
 	}
 
-	QString sign;
 	QString binary;
 
 	if(reprMode == ReprMode::Human) {
 		switch (mode) {
 			case Mode::Signed:
-				sign = value.intVal < 0 ? "-" : "";
-				binary = QString("%1").arg(std::abs(value.intVal), 64, base, QLatin1Char('0'));
-				break;
+				BasicInput::displayValueChanged(value, userInput);
+				return;
 			case Mode::Unsigned:
 				binary = QString("%1").arg(value.uIntVal, 64, base, QLatin1Char('0'));
 				break;
@@ -112,31 +110,27 @@ void BinaryInput::displayValueChanged(const Value &value, bool userInput)
 		binary.insert(i, " ");
 	}
 
-	// Workaround for binary edit only. Sign of number can change on update.
-	// Normal inputs have validators with optional signs. But binaryInput uses
-	// setInputMask which doesn't, so it needs to be updated every time to
-	// update sign.
-	updateValidator();
-
-	lineEdit->setText(sign+binary);
+	lineEdit->setText(binary);
 }
 
 void BinaryInput::updateValidator()
 {
-	QString signedPrefix;
 	if(reprMode == ReprMode::Human && mode == Mode::Signed)
 	{
-		// Don't show 64th bit, instead show - sign.
-		// Setting 64th bit manually shouldn't be allowed, becase then adding the
-		// - sign would make a number too big to represent in 64 bits. You'd need
-		// 65 bits.
-		if (value.intVal < 0)
-			signedPrefix = "-";
+		// Use all base class behavior for Signed input mode so that the -
+		// can be typed. That behavior is difficult to reproduce with an
+		// input mask.
+		lineEdit->setInputMask("");
+		lineEdit->setStripLeadingZeros(true);
+		BasicInput::updateValidator();
+		displayValueChanged(value, false);
 	}
 	else {
-		// 64th bit is visible in unsigned and machine mode
-		signedPrefix = "B";
+		// Remove validator that might have been applied by BasicInput when
+		// in human mode
+		lineEdit->setValidator(nullptr);
+		lineEdit->setMaxLength(32767);
+		lineEdit->setStripLeadingZeros(false);
+		lineEdit->setInputMask("BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB;0");
 	}
-
-	lineEdit->setInputMask(signedPrefix + "BBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB BBBB;0");
 }
