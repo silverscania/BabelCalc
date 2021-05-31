@@ -17,26 +17,23 @@
 // along with BabelCalc.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "narrowlineedit.h"
+
 #include <iostream>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QValidator>
 #include <QStyleOption>
 
-NarrowLineEdit::NarrowLineEdit(const QString& prefix, bool stripLeadingZeros) :
+#include "input.h"
+
+NarrowLineEdit::NarrowLineEdit(const QString& prefix, bool stripLeadingZeros,
+							   const Input& parentInput) :
 	QLineEdit(prefix+"0"),
 	prefix(prefix),
-	stripLeadingZeros(stripLeadingZeros)
+	stripLeadingZeros(stripLeadingZeros),
+	parentInput(parentInput)
 {
 	connect(this, &NarrowLineEdit::textChanged, [=]() { recalcSize();});
-	//QCursor cursor;//= cursor();
-	//cursor.setShape(Qt::CustomCursor);
-//	QCursor cursor(QBitmap(10, 100), QBitmap(10, 100));
-//	setCursor(cursor);
-//style()->pix
-//	set
-//	QStyleOption option;
-//	option.initFrom(this);
 }
 
 QSize NarrowLineEdit::getNarrowLineSize() const
@@ -156,15 +153,18 @@ void NarrowLineEdit::focusOutEvent(QFocusEvent *e)
 }
 
 
-bool NarrowLineEdit::canEnterChar(const QString& character) {
+bool NarrowLineEdit::canEnterChar(const QString& character)
+{
 	QString newString = displayText();
 	newString.insert(cursorPosition(), character);
 
-	int notUsed = 0;
-	if(validator())
-		return validator()->validate(newString, notUsed) == QValidator::State::Acceptable;
-	else
-		return true;
+	return parentInput.validate(newString);
+//	int notUsed = 0;
+//	if(validator())
+//		return validator()->validate(newString, notUsed) == QValidator::State::Acceptable;
+//	else
+//		return true;
+
 }
 
 void NarrowLineEdit::keyPressEvent(QKeyEvent *event)

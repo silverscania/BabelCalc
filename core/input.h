@@ -44,6 +44,7 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 		static CalcFloat stringToFloat(QString string, int base, bool* ok);
 		static QString floatToString(CalcFloat value, int base, const QString& prefix);
 		void postConstruction();
+		bool validate(const QString& string) const;
 
 		const int base;
 		const QString prefix;
@@ -76,8 +77,9 @@ class Input : public QFrame //Inherit from QFrame instead of QWidget to support 
 		void setDisplayValueHuman(const Value& value);
 		void setDisplayValueMachine(const Value& value);
 
-		Value machineInputToValue(const QString& text);
-		Value humanInputToValue(const QString& text);
+		Value inputToValue(const QString& inputText, bool* conversionOk) const;
+		Value machineInputToValue(const QString& inputText, bool* conversionOk) const;
+		Value humanInputToValue(const QString& inputText, bool* conversionOk) const;
 
 	private:
 		static QString floatToStringFractions(CalcFloat value, int base);

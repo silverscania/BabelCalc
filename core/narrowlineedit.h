@@ -20,11 +20,14 @@
 
 #include <QLineEdit>
 
+class Input;
+
 class NarrowLineEdit : public QLineEdit
 {
 	Q_OBJECT
 	public:
-		NarrowLineEdit(const QString& prefix, bool stripLeadingZeros);
+		NarrowLineEdit(const QString& prefix, bool stripLeadingZeros,
+					   const Input& parentInput);
 
 		QSize sizeHint() const override;
 
@@ -37,6 +40,7 @@ class NarrowLineEdit : public QLineEdit
 
 	private:
 		bool stripLeadingZeros;
+		const Input& parentInput;
 
 		QSize getNarrowLineSize() const;
 		void handleKeyInput(QKeyEvent* event);

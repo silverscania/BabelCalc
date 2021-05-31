@@ -26,7 +26,7 @@ Input::Input(int base, Mode mode, ReprMode reprMode, const QString& labelText, b
 	base(base),
 	prefix(prefix),
 	labelText(labelText),
-	lineEdit(new NarrowLineEdit(prefix, stripLeadingZeros)),
+	lineEdit(new NarrowLineEdit(prefix, stripLeadingZeros, *this)),
 	label(new QLabel()),
 	mode(mode),
 	reprMode(reprMode)
@@ -63,6 +63,13 @@ void Input::displayValueChanged(const Value &value, bool userInput)
 			setDisplayValueMachine(value);
 			break;
 	}
+}
+
+bool Input::validate(const QString &string) const
+{
+	bool conversionOk = false;
+	inputToValue(string, &conversionOk);
+	return conversionOk;
 }
 
 /**
@@ -238,16 +245,17 @@ void Input::setNextInputClears(bool inputClears)
 void Input::digitEdit(const QString&)
 {
 	const QString inputText {lineEdit->getStrippedInput()};
-	Value RHS;
+	bool ok;
+	emit inputChanged(inputToValue(inputText, &ok), base, mode);
+}
 
+Value Input::inputToValue(const QString& inputText, bool* conversionOk) const
+{
 	switch (reprMode) {
 		case ReprMode::Human:
-			emit inputChanged(humanInputToValue(inputText), base, mode);
-			break;
-
+			return humanInputToValue(inputText, conversionOk);
 		case ReprMode::Machine:
-			emit inputChanged(machineInputToValue(inputText), base, mode);
-			break;
+			return machineInputToValue(inputText, conversionOk);
 	}
 }
 
@@ -255,32 +263,31 @@ void Input::digitEdit(const QString&)
  * Convert text entered by user in human mode to a value. Prefix
  * should already have been stripped before calling this.
  */
-Value Input::humanInputToValue(const QString& inputText)
+Value Input::humanInputToValue(const QString& inputText, bool* conversionOk) const
 {
-	bool conversionOk = false;
 	switch(mode) {
 		case Mode::Signed: {
-			CalcInt val {inputText.toLongLong(&conversionOk, base)};
+			// TODO: use toLong for 32bit mode so we know if its valid input
+			//       or not.
+			CalcInt val {inputText.toLongLong(conversionOk, base)};
 			return Value(val, static_cast<CalcFloat>(val), static_cast<CalcUInt>(val));
 		}
 		case Mode::Unsigned: {
-			CalcUInt val {inputText.toULongLong(&conversionOk, base)};
+			CalcUInt val {inputText.toULongLong(conversionOk, base)};
 			return Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
 		}
 		case Mode::Float: {
-			bool ok = false;
-			// TODO: pass ok out of this function (or use exceptions?)
-			CalcFloat val {stringToFloat(inputText, base, &ok)};
+			CalcFloat val {stringToFloat(inputText, base, conversionOk)};
 			return Value(static_cast<CalcInt>(val), static_cast<CalcFloat>(val), val);
 		}
 	}
 }
 
-Value Input::machineInputToValue(const QString& inputText)
+Value Input::machineInputToValue(const QString& inputText, bool* conversionOk) const
 {
 	// All inputs take raw value in machine mode
-	bool conversionOk = false;
-	const CalcUInt unsignedVal {inputText.toULongLong(&conversionOk, base)};
+	// TODO: use toULong in 32bit mode
+	const CalcUInt unsignedVal {inputText.toULongLong(conversionOk, base)};
 
 	switch(mode) {
 		case Mode::Signed: {

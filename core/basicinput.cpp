@@ -56,46 +56,47 @@ BasicInput::BasicInput(int base, Mode mode, ReprMode reprMode, const QString& la
 
 void BasicInput::updateValidator()
 {
-	constexpr char nums[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-	constexpr char lowerAlph[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
-								  'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-								  'w', 'x', 'y', 'z'};
-	//constexpr char upperAlph[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'}; //todo more
+	//try actually converting the number to see if it's valid or not
+//	constexpr char nums[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+//	constexpr char lowerAlph[] = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+//								  'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+//								  'w', 'x', 'y', 'z'};
+//	//constexpr char upperAlph[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'}; //todo more
 
-	//set line len. Base 10 supports e notation and floating point so don't do a hard limit.
-	if(base == 10) {
-		lineEdit->setMaxLength(prefix.length() + 1 + GUI::DECIMAL_DISP_LEN + 5); // 5 digits for exp ("E+999")
-	}
-	else {
-		lineEdit->setMaxLength(getMaxLength());
-	}
+//	//set line len. Base 10 supports e notation and floating point so don't do a hard limit.
+//	if(base == 10) {
+//		lineEdit->setMaxLength(prefix.length() + 1 + GUI::DECIMAL_DISP_LEN + 5); // 5 digits for exp ("E+999")
+//	}
+//	else {
+//		lineEdit->setMaxLength(getMaxLength());
+//	}
 
-	const QString signedPrefix = mode == Mode::Signed && reprMode == ReprMode::Human ? "-?" : "";
-	QString validDigits;
-	if(base <= 10) {
-		validDigits = QString("[0-%1]").arg(QString(nums[base-1]));
-	}
-	else {
-		validDigits = QString("[0-9,a-%1]").arg(QString(lowerAlph[base-10-1]));
-	}
+//	const QString signedPrefix = mode == Mode::Signed && reprMode == ReprMode::Human ? "-?" : "";
+//	QString validDigits;
+//	if(base <= 10) {
+//		validDigits = QString("[0-%1]").arg(QString(nums[base-1]));
+//	}
+//	else {
+//		validDigits = QString("[0-9,a-%1]").arg(QString(lowerAlph[base-10-1]));
+//	}
 
-	QString pattern;
-	//set validator.
-	if(mode == Mode::Float) {
-		// -?[0-9]+(\.[0-9]+)?(e-?[0-9]+)?
-		pattern = QString(R"(-?%1%2+\.?%2*e?-?%2*)").arg(prefix, validDigits);
-	}
-	else if(base <= 10) {
-		//TODO: pattern = support E notation for ints QString("%1%2[0-9]+e*-*[0-9]*").arg(signedPrefix, prefix);
-		//TODO: toULongLong() doesn't support e notation though...
-		pattern = QString("%3%1[0-%2]+").arg(prefix, QString(nums[base-1]), signedPrefix);
-	}
-	else {
-		pattern = QString("%3%1[0-9,a-%2]+").arg(prefix, QString(lowerAlph[base-10-1]), signedPrefix);
-	}
+//	QString pattern;
+//	//set validator.
+//	if(mode == Mode::Float) {
+//		// -?[0-9]+(\.[0-9]+)?(e-?[0-9]+)?
+//		pattern = QString(R"(-?%1%2+\.?%2*e?-?%2*)").arg(prefix, validDigits);
+//	}
+//	else if(base <= 10) {
+//		//TODO: pattern = support E notation for ints QString("%1%2[0-9]+e*-*[0-9]*").arg(signedPrefix, prefix);
+//		//TODO: toULongLong() doesn't support e notation though...
+//		pattern = QString("%3%1[0-%2]+").arg(prefix, QString(nums[base-1]), signedPrefix);
+//	}
+//	else {
+//		pattern = QString("%3%1[0-9,a-%2]+").arg(prefix, QString(lowerAlph[base-10-1]), signedPrefix);
+//	}
 
-	const QRegExp regExp(pattern,Qt::CaseInsensitive);
-	lineEdit->setValidator(new QRegExpValidator(regExp));
+//	const QRegExp regExp(pattern,Qt::CaseInsensitive);
+//	lineEdit->setValidator(new QRegExpValidator(regExp));
 }
 
 /**
@@ -104,15 +105,15 @@ void BasicInput::updateValidator()
  */
 int BasicInput::getMaxLength()
 {
-	//TODO: max length doesn't need to be set if input is converted
-	//TODO: to a number on every input. Only successful inputs need to
-	//TODO: update the box.
-	CalcInt max;
-	if(bitWidth == BitWidth::ThirtyTwo) {
-		max = -0xFFFF'FFFF;
-	}
-	else  {
-		max = -0xFFFF'FFFF'FFFF'FFFF;
-	}
-	return 10;
+//	//TODO: max length doesn't need to be set if input is converted
+//	//TODO: to a number on every input. Only successful inputs need to
+//	//TODO: update the box.
+//	CalcInt max;
+//	if(bitWidth == BitWidth::ThirtyTwo) {
+//		max = -0xFFFF'FFFF;
+//	}
+//	else  {
+//		max = -0xFFFF'FFFF'FFFF'FFFF;
+//	}
+//	return 10;
 }
