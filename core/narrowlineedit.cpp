@@ -30,10 +30,10 @@ NarrowLineEdit::NarrowLineEdit(const QString& prefix, bool stripLeadingZeros,
 							   const Input& parentInput) :
 	QLineEdit(prefix+"0"),
 	prefix(prefix),
-	stripLeadingZeros(stripLeadingZeros),
-	parentInput(parentInput)
+	stripLeadingZeros(stripLeadingZeros)
 {
 	connect(this, &NarrowLineEdit::textChanged, [=]() { recalcSize();});
+	setValidator(new Validator(parentInput));
 }
 
 QSize NarrowLineEdit::getNarrowLineSize() const
@@ -91,34 +91,9 @@ void NarrowLineEdit::fixupInput() {
 	}
 }
 
-void NarrowLineEdit::handleKeyInput(QKeyEvent *event)
-{
-	if(nextInputClears) {
-		setText(prefix + "0");
-	}
-
-	//Don't do anything if not a valid char (also ignore the event so the gui gets the '-' key)
-	if(!canEnterChar(event->text())) {
-		event->ignore();
-		return;
-	}
-
-	QLineEdit::keyPressEvent(event);
-
-	fixupInput();
-}
-
-///Backspace and arrow keys
-void NarrowLineEdit::handleControlInput(QKeyEvent *event)
-{
-	if(nextInputClears) {
-		setText(prefix + "0");
-	}
-
-	QLineEdit::keyPressEvent(event);
-	fixupInput();
-}
-
+/**
+ * Used for input Keys on GUI, rather than keyboard input.
+ */
 void NarrowLineEdit::insert(const QString& text)
 {
 	if(nextInputClears) {
@@ -152,44 +127,27 @@ void NarrowLineEdit::focusOutEvent(QFocusEvent *e)
 	emit focussed(false);
 }
 
-
-bool NarrowLineEdit::canEnterChar(const QString& character)
-{
-	QString newString = displayText();
-	newString.insert(cursorPosition(), character);
-
-	return parentInput.validate(newString);
-//	int notUsed = 0;
-//	if(validator())
-//		return validator()->validate(newString, notUsed) == QValidator::State::Acceptable;
-//	else
-//		return true;
-
-}
-
 void NarrowLineEdit::keyPressEvent(QKeyEvent *event)
 {
-	if(event->key() >= Qt::Key_0 && event->key() <= Qt::Key_9) {
-		handleKeyInput(event);
+	if(nextInputClears) {
+		setText(prefix + "0");
 	}
-	else if(event->key() >= Qt::Key_A && event->key() <= Qt::Key_Z) {
-		handleKeyInput(event);
-	}
-	else {
-		switch(event->key()) {
-			case Qt::Key_Left: case Qt::Key_Right:
-			case Qt::Key_Backspace:
-				handleControlInput(event);
-				break;
 
-			case Qt::Key_Period:
-			case Qt::Key_Minus:
-				handleKeyInput(event);
-				break;
-
-			default:
-				event->ignore();
-				break;
-		}
+	// Special case - sign being inserted at the first character to negate the
+	// number, otherwise send the - to the GUI to do subtraction operation.
+	if(event->text() == "-" && cursorPosition() != 0) {
+		event->ignore();
+		return;
 	}
+
+	QLineEdit::keyPressEvent(event);
+	fixupInput();
+}
+
+QValidator::State Validator::validate(QString &inputText, int &pos) const
+{
+	if (input.validate(inputText))
+		return QValidator::Acceptable;
+	else
+		return QValidator::Invalid;
 }

@@ -19,8 +19,17 @@
 #pragma once
 
 #include <QLineEdit>
-
+#include <QValidator>
 class Input;
+
+class Validator : public QValidator
+{
+	Q_OBJECT
+	public:
+		Validator(const Input& input) : input(input) {}
+		const Input& input;
+		State validate(QString &input, int &pos) const override;
+};
 
 class NarrowLineEdit : public QLineEdit
 {
@@ -40,7 +49,6 @@ class NarrowLineEdit : public QLineEdit
 
 	private:
 		bool stripLeadingZeros;
-		const Input& parentInput;
 
 		QSize getNarrowLineSize() const;
 		void handleKeyInput(QKeyEvent* event);
@@ -48,7 +56,6 @@ class NarrowLineEdit : public QLineEdit
 		bool canEnterChar(const QString& text);
 		void fixupInput();
 		bool nextInputClears {false};
-		//void paintEvent(QPaintEvent *);
 
 	signals:
 		void focussed(bool hasFocus);
